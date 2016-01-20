@@ -1,0 +1,24 @@
+{
+  "name": "mmo-client-test",
+  "description": "attempt for an mmo client that will go nowhere",
+  "author": "Hadrien Bellahcene",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git"
+  },
+  "scripts": {
+    "start": "brunch watch --server"
+  },
+  "dependencies": {
+    "auto-reload-brunch": ">= 1.0 ",
+    "babel-brunch": "^5.1.2",
+    "clean-css-brunch": ">= 1.0 ",
+    "css-brunch": ">= 1.0 ",
+    "javascript-brunch": ">= 1.0 ",
+    "jshint-brunch": "^1.8.0",
+    "uglify-js-brunch": ">= 1.0"
+  },
+  "devDependencies": {
+    "brunch": "^1.8.5"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "mmo-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node app/server.js"
+  },
+  "author": "Hadrien Bellahcene",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3",
+    "morgan": "^1.6.1",
+    "socket.io": "^1.4.4"
+  }
+}
