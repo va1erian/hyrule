@@ -2,7 +2,7 @@
 
 export class WorldState {
    constructor() {
-      this.layers = new Map();
+      this.layers = [];
       this.actors = [];
       this.worldSector = 0;
       this.subSector   = 0;

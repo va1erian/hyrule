@@ -12,13 +12,20 @@ var Direction = {
 };
 
 export class Actor {
-   constructor(sprite) {
+   constructor(sprite, world) {
       this.sprites = [sprite];
-      this.bbox = new Rectangle();
       this.x = 0;
       this.y = 0;
+      this.w = 0;
+      this.h = 0;
+      this.layer = 0;
       this.xMom = 0;
       this.yMom = 0;
+      this.world = world;
+   }
+   
+   get currentLayer() {
+      return this.world.layers[this.layer];
    }
    
    update(dt) { 
@@ -26,9 +33,19 @@ export class Actor {
       
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
-      this.x = nextX;
-      this.y = nextY;
+     
+      if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
+         this.colliding(nextX,nextY);
+      } else {
+         this.x = nextX;
+         this.y = nextY;
+      }
    }  
+   
+   colliding(x,y) {
+      console.log('fail');
+   }
+   
    
    paint(ctx, x, y) {
       for(const sprite of this.sprites) sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
@@ -38,17 +55,17 @@ export class Actor {
 
 
 export class Player extends Actor {
-   constructor() {
+   constructor(world) {
       const sheet = TheAssetManager.get('sprite-link');
       const tileset = new TileSet(sheet, 16, 16);      
-      super(new Sprite([tileset]));
-      this.bbox.w = 16;
-      this.bbox.h = 16;
+      super(new Sprite([tileset]),world);
+      this.w = 16;
+      this.h = 16;
       this.direction = Direction.NORTH;
       
       var dirChange = function() {
          this.direction = Math.floor(Math.random() * 4);
-         setTimeout(dirChange, Math.floor(Math.random() * 1000));
+         setTimeout(dirChange, Math.floor(Math.random() * 1000) + 1000);
       }.bind(this);
       
       dirChange();
@@ -74,9 +91,11 @@ export class Player extends Actor {
          this.yMom = 0;
          break;
       }
-      
-
       super.update(dt);
+   }
+   
+   colliding(x,y) {
+         this.direction = Math.floor(Math.random() * 4);
    }
    
 }

@@ -2,7 +2,7 @@
 'use strict';
 
 import { ViewPort } from 'src/gfx/viewport';
-import { TileSet, TileMap} from 'src/gfx/tiles';
+import { TileSet, TileMap, TileType } from 'src/gfx/tiles';
 import { WorldState } from 'src/world/state';
 import { Player } from 'src/world/actor';
 import { Rectangle, Renderer } from 'src/gfx/utils';
@@ -57,20 +57,30 @@ class Camera {
    }
 }
 
-var socket = io.connect();
+let socket = io.connect();
 
 function init(assets) {
-   var tilemap = new TileMap(256,84, assets.get('map-overworld'));
-   var tileset = new TileSet(assets.get('tileset-overworld'), 16,16, 0);
+   let tileset = new TileSet(assets.get('tileset-overworld'), 16,16);
+   let worldTileProps = tileset.makeTileProps();
+   
+   worldTileProps[6]  |= TileType.TILE_WALKABLE;
+   worldTileProps[44] |= TileType.TILE_WALKABLE;
+   worldTileProps[45] |= TileType.TILE_WALKABLE;
+   
+   let tilemap = new TileMap(256,84, assets.get('map-overworld'), tileset);
+   tilemap.tileProps = worldTileProps;
    var world = new WorldState();
       
-
-   world.layers.set(tilemap, tileset);
+   world.layers.push([tilemap, tileset]);
    
-   for(var i = 0; i < 1000; i++) {
-      var player =  new Player();
-      player.x = Math.random() * 4000 | 0;
-      player.y = Math.random() * 1000 | 0;
+   for(var i = 0; i < 800; i++) {
+      let player =  new Player(world);
+      
+      do {
+         player.x = Math.random() * 4000 | 0;
+         player.y = Math.random() * 1400 | 0;
+      } while(tilemap.isColliding(player));
+          
       world.actors.push(player);
    }
 

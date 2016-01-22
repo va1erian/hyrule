@@ -22,14 +22,47 @@ export class TileSet {
          this.tileW, this.tileH, x, y,
          this.tileW, this.tileH);      
    }
+   
+   makeTileProps() {
+      return new Uint16Array(this.w * this.h);
+   }
+   
+}
+
+export const TileType = {
+   TILE_WALKABLE : 1 << 0
 }
 
 export class TileMap {
-   constructor(w, h, array) {
+   constructor(w, h, array, tileset) {
       this.w = w;
       this.h = h;
-      this.array = new Int16Array(array);      
+      this.array = new Int16Array(array);   
+      this.tileset = tileset;   
+      this.tileProps = [];
+
    }  
+   
+   isRectOnTileFlag(rect,flag) {
+      return this.tileHasFlag(this.getTileAtPos(rect.x, rect.y), flag) 
+         && this.tileHasFlag(this.getTileAtPos(rect.x + rect.w, rect.y),flag)
+         && this.tileHasFlag(this.getTileAtPos(rect.x + rect.w, rect.y + rect.h),flag)
+         && this.tileHasFlag(this.getTileAtPos(rect.x, rect.y + rect.h),flag);
+   }
+   
+   tileHasFlag(tile, flag) {
+      return this.tileProps[tile] & flag;
+   }
+   
+   isColliding(rect) {
+      return !this.isRectOnTileFlag(rect, TileType.TILE_WALKABLE);
+   }
+   
+   getTileAtPos(x, y) {
+      x = Math.floor(x / this.tileset.tileW);
+      y = Math.floor(y / this.tileset.tileH);
+      return this.array[y * this.w + x];
+   }
    
    paint(ctx, tset, x, y, clip) {   
       const clipX = (clip.x / tset.tileW) | 0;
