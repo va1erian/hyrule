@@ -8,7 +8,7 @@ import { Player } from 'src/world/actor';
 import { Rectangle, Renderer } from 'src/gfx/utils';
 import { GameLoop } from 'src/tools/loop';
 import { TheAssetManager } from 'src/tools/assets';
-
+import { TheInput, Keys } from 'src/tools/input';
 
 var loop = new GameLoop();
 
@@ -22,8 +22,6 @@ class Camera {
       this.viewport = viewport;
       this.xMom = 0;
       this.yMom = 0;
-      document.addEventListener('keydown', this.onKeyDown.bind(this), false);
-      document.addEventListener('keyup', this.onKeyUp.bind(this), false);
    }
    
    update(dt) {
@@ -32,28 +30,19 @@ class Camera {
       this.viewport.metrics.x = nextX;
       this.viewport.metrics.y = nextY;
       
-      this.xMom *= 0.95;
-      this.yMom *= 0.95;   
-   }
-   
-   onKeyDown(e) {
-      var key = String.fromCharCode(e.keyCode);
-      if(key === 'F') {
+      if(TheInput.pressed(Keys.RIGHT)) {
          this.xMom = 200; 
-      } else if(key === 'S') {
+      } else if(TheInput.pressed(Keys.LEFT)) {
          this.xMom = -200; 
       }
       
-      
-      if(key === 'E') {
+      if(TheInput.pressed(Keys.UP)) {
          this.yMom = -200;
-      } else if(key === 'D') {
+      } else if(TheInput.pressed(Keys.DOWN)) {
          this.yMom = 200;
       }
-   }
-   
-   onKeyUp() {
-      
+      this.xMom *= 0.95;
+      this.yMom *= 0.95;   
    }
 }
 
