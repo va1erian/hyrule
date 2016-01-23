@@ -1,8 +1,9 @@
 
-import {Rectangle} from 'src/gfx/utils';
-import {TheAssetManager} from 'src/tools/assets';
-import {TileSet} from 'src/gfx/tiles';
-import {Sprite} from 'src/gfx/sprite';
+import {Rectangle} from 'gfx/utils';
+import {TheAssetManager} from 'tools/assets';
+import {TileSet} from 'gfx/tiles';
+import {Sprite} from 'gfx/sprite';
+import {TheInput, Keys} from 'tools/input';
 
 var Direction = {
    NORTH : 0,
@@ -43,7 +44,6 @@ export class Actor {
    }  
    
    colliding(x,y) {
-      console.log('fail');
    }
    
    
@@ -52,11 +52,9 @@ export class Actor {
    } 
 }
 
-
-
-export class Player extends Actor {
+export class Moblin extends Actor {
    constructor(world) {
-      const sheet = TheAssetManager.get('sprite-link');
+      const sheet = TheAssetManager.get('sprite-moblin');
       const tileset = new TileSet(sheet, 16, 16);      
       super(new Sprite([tileset]),world);
       this.w = 16;
@@ -97,5 +95,47 @@ export class Player extends Actor {
    colliding(x,y) {
          this.direction = Math.floor(Math.random() * 4);
    }
+}
+
+export class Player extends Actor {
+   constructor(world, controller) {
+      const sheet = TheAssetManager.get('sprite-link');
+      const tileset = new TileSet(sheet, 16, 16);      
+      super(new Sprite([tileset]),world);
+      this.w = 16;
+      this.h = 16;
+      this.controller = controller;
+      this.controller.actor = this;
+      this.direction = Direction.NORTH;
+   }
    
+   update(dt) {
+      this.controller.update(dt);
+      this.sprites[0].currentAnimation = this.direction;
+      super.update(dt);
+   }
+}
+
+export class KeyboardController {
+   update(dt) {
+      if(TheInput.pressed(Keys.RIGHT)) {
+         this.actor.direction = Direction.EAST;
+         this.actor.xMom = 48; 
+      } else if(TheInput.pressed(Keys.LEFT)) {
+         this.actor.direction = Direction.WEST;
+         this.actor.xMom = -48; 
+      } else {
+         this.actor.xMom = 0;
+      }
+      
+      if(TheInput.pressed(Keys.UP)) {
+         this.actor.direction = Direction.NORTH;
+         this.actor.yMom = -48;
+      } else if(TheInput.pressed(Keys.DOWN)) {
+         this.actor.direction = Direction.SOUTH;
+         this.actor.yMom = 48;
+      } else {
+         this.actor.yMom = 0;
+      }
+   }
 }

@@ -1,4 +1,4 @@
-import { Rectangle } from 'src/gfx/utils';
+import { Rectangle } from 'gfx/utils';
 
 export class ViewPort {
    constructor(world, metrics = new Rectangle()) {

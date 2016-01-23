@@ -1,50 +1,23 @@
 /* global io */
 'use strict';
 
-import { ViewPort } from 'src/gfx/viewport';
-import { TileSet, TileMap, TileType } from 'src/gfx/tiles';
-import { WorldState } from 'src/world/state';
-import { Player } from 'src/world/actor';
-import { Rectangle, Renderer } from 'src/gfx/utils';
-import { GameLoop } from 'src/tools/loop';
-import { TheAssetManager } from 'src/tools/assets';
-import { TheInput, Keys } from 'src/tools/input';
+import { ViewPort } from 'gfx/viewport';
+import { TileSet, TileMap, TileType } from 'gfx/tiles';
+import { WorldState } from 'world/state';
+import { Moblin, Player, KeyboardController } from 'world/actor';
+import { Rectangle, Renderer } from 'gfx/utils';
+import { GameLoop } from 'tools/loop';
+import { TheAssetManager } from 'tools/assets';
+import { TheInput, Keys } from 'tools/input';
+import { PlayerCamera } from 'world/camera';
 
 var loop = new GameLoop();
 
 TheAssetManager.push('map-overworld', 'data/overworld.map')
    .push('tileset-overworld', 'img/overworld.gif')
    .push('sprite-link', 'img/link.png')
+   .push('sprite-moblin', 'img/moblin.png')
    .then(init);
-
-class Camera {
-   constructor(viewport) {
-      this.viewport = viewport;
-      this.xMom = 0;
-      this.yMom = 0;
-   }
-   
-   update(dt) {
-      const nextX = this.viewport.metrics.x + (this.xMom === 0 ? 0 : this.xMom * dt);
-      const nextY = this.viewport.metrics.y + (this.yMom === 0 ? 0 : this.yMom * dt);
-      this.viewport.metrics.x = nextX;
-      this.viewport.metrics.y = nextY;
-      
-      if(TheInput.pressed(Keys.RIGHT)) {
-         this.xMom = 200; 
-      } else if(TheInput.pressed(Keys.LEFT)) {
-         this.xMom = -200; 
-      }
-      
-      if(TheInput.pressed(Keys.UP)) {
-         this.yMom = -200;
-      } else if(TheInput.pressed(Keys.DOWN)) {
-         this.yMom = 200;
-      }
-      this.xMom *= 0.95;
-      this.yMom *= 0.95;   
-   }
-}
 
 let socket = io.connect();
 
@@ -62,19 +35,28 @@ function init(assets) {
       
    world.layers.push([tilemap, tileset]);
    
-   for(var i = 0; i < 800; i++) {
-      let player =  new Player(world);
-      
-      do {
+   let player = new Player(world, new KeyboardController());  
+   
+   do {
          player.x = Math.random() * 4000 | 0;
          player.y = Math.random() * 1400 | 0;
-      } while(tilemap.isColliding(player));
+   } while(tilemap.isColliding(player));
+   
+   world.actors.push(player);
+      
+   for(var i = 0; i < 800; i++) {
+      let mob =  new Moblin(world);
+      
+      do {
+         mob.x = Math.random() * 4000 | 0;
+         mob.y = Math.random() * 1400 | 0;
+      } while(tilemap.isColliding(mob));
           
-      world.actors.push(player);
+      world.actors.push(mob);
    }
 
    const viewport = new ViewPort(world, new Rectangle (0, 0, 256, 224));
-   const cam = new Camera(viewport);
+   const cam = new PlayerCamera(viewport, player);
    loop.add(world);
    loop.add(cam);
    loop.add(new Renderer(viewport));

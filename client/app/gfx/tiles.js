@@ -1,6 +1,6 @@
 'use strict';
 
-import {Rectangle} from 'src/gfx/utils';
+import {Rectangle} from 'gfx/utils';
 
 export class TileSet {
    constructor(pic, tileH, tileW, padding = 0) {
