@@ -21,6 +21,7 @@ TheAssetManager.push('map-overworld', 'data/overworld.map')
 
 let socket = io.connect();
 
+
 function init(assets) {
    let tileset = new TileSet(assets.get('tileset-overworld'), 16,16);
    let worldTileProps = tileset.makeTileProps();
@@ -35,11 +36,11 @@ function init(assets) {
       
    world.layers.push([tilemap, tileset]);
    
-   let player = new Player(world, new KeyboardController());  
+   let player = new Player(world, new KeyboardController(socket));  
    
    do {
-         player.x = Math.random() * 4000 | 0;
-         player.y = Math.random() * 1400 | 0;
+      player.x = Math.random() * 4000 | 0;
+      player.y = Math.random() * 1400 | 0;
    } while(tilemap.isColliding(player));
    
    world.actors.push(player);
@@ -61,6 +62,7 @@ function init(assets) {
    loop.add(cam);
    loop.add(new Renderer(viewport));
    
+   socket.on('player-join', () => console.log('zob'));
 
    loop.start();
 }

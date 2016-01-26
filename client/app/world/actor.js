@@ -116,7 +116,26 @@ export class Player extends Actor {
    }
 }
 
+class MovementState {
+   constructor() {
+      this.moving    = false;
+      this.attacking = false;
+      this.dir    = Direction.NORTH;
+   }
+   
+   equals(obj) {
+      return this.moving == obj.moving &&
+         this.attacking == obj.attacking &&
+         this.dir == obj.dir;
+   }
+}
+
 export class KeyboardController {
+   constructor(socket) {
+      this.socket = socket;
+      this.oldState = new MovementState();
+   }
+   
    update(dt) {
       if(TheInput.pressed(Keys.RIGHT)) {
          this.actor.direction = Direction.EAST;
@@ -131,11 +150,23 @@ export class KeyboardController {
       if(TheInput.pressed(Keys.UP)) {
          this.actor.direction = Direction.NORTH;
          this.actor.yMom = -48;
+
       } else if(TheInput.pressed(Keys.DOWN)) {
          this.actor.direction = Direction.SOUTH;
          this.actor.yMom = 48;
       } else {
          this.actor.yMom = 0;
+      }
+      
+      let newState = new MovementState();
+      if(this.actor.xMom !== 0 || this.actor.yMom !== 0) {
+         newState.moving = true;
+         newState.dir = this.actor.direction;
+      }
+      
+      if(!this.oldState.equals(newState)) {
+         this.socket.emit('player-act', newState);
+         this.oldState = newState;
       }
    }
 }

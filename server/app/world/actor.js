@@ -3,7 +3,6 @@ import {Rectangle} from 'gfx/utils';
 import {TheAssetManager} from 'tools/assets';
 import {TileSet} from 'gfx/tiles';
 import {Sprite} from 'gfx/sprite';
-import {TheInput, Keys} from 'tools/input';
 
 var Direction = {
    NORTH : 0,
@@ -113,29 +112,5 @@ export class Player extends Actor {
       this.controller.update(dt);
       this.sprites[0].currentAnimation = this.direction;
       super.update(dt);
-   }
-}
-
-export class KeyboardController {
-   update(dt) {
-      if(TheInput.pressed(Keys.RIGHT)) {
-         this.actor.direction = Direction.EAST;
-         this.actor.xMom = 48; 
-      } else if(TheInput.pressed(Keys.LEFT)) {
-         this.actor.direction = Direction.WEST;
-         this.actor.xMom = -48; 
-      } else {
-         this.actor.xMom = 0;
-      }
-      
-      if(TheInput.pressed(Keys.UP)) {
-         this.actor.direction = Direction.NORTH;
-         this.actor.yMom = -48;
-      } else if(TheInput.pressed(Keys.DOWN)) {
-         this.actor.direction = Direction.SOUTH;
-         this.actor.yMom = 48;
-      } else {
-         this.actor.yMom = 0;
-      }
    }
 }
