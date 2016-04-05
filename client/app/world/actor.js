@@ -15,13 +15,14 @@ var Direction = {
 export class Actor {
    constructor(sprite, world) {
       this.sprites = [sprite];
+      this.offX = 0;
+      this.offY = 0;
       this.x = 0;
       this.y = 0;
       this.w = 0;
       this.h = 0;
       this.layer = 0;
-      this.xMom = 0;
-      this.yMom = 0;
+
       this.world = world;
    }
    
@@ -35,7 +36,8 @@ export class Actor {
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
      
-      if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
+      if(this.currentLayer[0].isColliding(
+            new Rectangle(nextX  ,nextY , this.w, this.h, this.offX, this.offY))) {
          this.colliding(nextX,nextY);
       } else {
          this.x = nextX;
@@ -57,8 +59,10 @@ export class Moblin extends Actor {
       const sheet = TheAssetManager.get('sprite-moblin');
       const tileset = new TileSet(sheet, 16, 16);      
       super(new Sprite([tileset]),world);
-      this.w = 16;
-      this.h = 16;
+      this.offY = 8;
+      this.offX = 2;
+      this.w = 14;
+      this.h = 8;
       this.direction = Direction.NORTH;
       
       var dirChange = function() {
@@ -102,8 +106,11 @@ export class Player extends Actor {
       const sheet = TheAssetManager.get('sprite-link');
       const tileset = new TileSet(sheet, 16, 16);      
       super(new Sprite([tileset]),world);
-      this.w = 16;
-      this.h = 16;
+      this.offY = 8;
+      this.offX = 2;
+      this.w = 14;
+      this.h = 8;
+      
       this.controller = controller;
       this.controller.actor = this;
       this.direction = Direction.NORTH;

@@ -7,17 +7,21 @@ export const Keys = {
    ATTACK: 90
 }
 
+const codes = new Set(Object.keys(Keys).map(k => Keys[k]));
+
 class Input {
    constructor() {
       this._pressed = [];
       
       window.addEventListener('keyup', (e) => {
-         e.preventDefault();
+         if(codes.has(e.keyCode)) e.preventDefault();
+         
          delete this._pressed[e.keyCode];
       }, false)
       
       window.addEventListener('keydown', (e) => {
-         e.preventDefault();
+         if(codes.has(e.keyCode)) e.preventDefault();
+         
          this._pressed[e.keyCode] = true;
       }, false)
    }
