@@ -12,6 +12,7 @@
   "dependencies": {
     "auto-reload-brunch": ">= 1.0 ",
     "babel-brunch": "^5.1.2",
+    "bootstrap": "^3.3.6",
     "brunch": "^2.2.0",
     "clean-css-brunch": ">= 1.0 ",
     "css-brunch": ">= 1.0 ",
