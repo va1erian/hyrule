@@ -1,1 +1,46 @@
+/*
+.colorChoice [type="radio"] {
+    display: none;
+}
 
+.colorChoice [type="radio"] + label div.skin-black {
+    background-image: url("assets/img/link_black.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-blue {
+    background-image: url("assets/img/link_blue.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-green {
+    background-image: url("assets/img/link_green.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-pink {
+    background-image: url("assets/img/link_pink.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-purple {
+    background-image: url("assets/img/link_purple.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-red {
+    background-image: url("assets/img/link_red.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-yellow {
+    background-image: url("assets/img/link_yellow.png");
+}
+
+.colorChoice [type="radio"] + label div.skin-img {
+    width: 64px;
+    height: 64px;
+    background-position: 65% 0%;
+    background-repeat: no-repeat;
+    background-size: 400%;
+}
+
+.colorChoice [type="radio"]:checked + label div.skin-img {
+    background-position: 75% 25%;
+}
+
+*/
