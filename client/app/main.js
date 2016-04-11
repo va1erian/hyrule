@@ -37,33 +37,17 @@ function init(assets) {
    world.layers.push([tilemap, tileset]);
    
    let player = new Player(world, new KeyboardController(socket));  
-   
-   do {
-      player.x = Math.random() * 4000 | 0;
-      player.y = Math.random() * 1400 | 0;
-   } while(tilemap.isColliding(player));
-   
+
    world.actors.push(player);
-      
-   for(var i = 0; i < 800; i++) {
-      let mob =  new Moblin(world);
-      
-      do {
-         mob.x = Math.random() * 4000 | 0;
-         mob.y = Math.random() * 1400 | 0;
-      } while(tilemap.isColliding(mob));
-          
-      world.actors.push(mob);
-   }
 
    const viewport = new ViewPort(world, new Rectangle (0, 0, 256, 224));
    const cam = new PlayerCamera(viewport, player);
    loop.add(world);
    loop.add(cam);
    loop.add(new Renderer(viewport));
-   
-   socket.on('player-join', () => console.log('zob'));
 
+   socket.on('player-join', (el) => console.log("New player joined the server"));
+   socket.on('player-update', (el) => console.log(el));
    loop.start();
 }
 

@@ -131,9 +131,9 @@ class MovementState {
    }
    
    equals(obj) {
-      return this.moving == obj.moving &&
-         this.attacking == obj.attacking &&
-         this.dir == obj.dir;
+      return this.moving === obj.moving &&
+         this.attacking === obj.attacking &&
+         this.dir === obj.dir;
    }
 }
 
@@ -144,33 +144,24 @@ export class KeyboardController {
    }
    
    update(dt) {
+      let moving = true;
+
       if(TheInput.pressed(Keys.RIGHT)) {
          this.actor.direction = Direction.EAST;
-         this.actor.xMom = 48; 
       } else if(TheInput.pressed(Keys.LEFT)) {
          this.actor.direction = Direction.WEST;
-         this.actor.xMom = -48; 
-      } else {
-         this.actor.xMom = 0;
-      }
-      
-      if(TheInput.pressed(Keys.UP)) {
+      }else if(TheInput.pressed(Keys.UP)) {
          this.actor.direction = Direction.NORTH;
-         this.actor.yMom = -48;
-
       } else if(TheInput.pressed(Keys.DOWN)) {
          this.actor.direction = Direction.SOUTH;
-         this.actor.yMom = 48;
       } else {
-         this.actor.yMom = 0;
+         moving = false;
       }
-      
-      let newState = new MovementState();
-      if(this.actor.xMom !== 0 || this.actor.yMom !== 0) {
-         newState.moving = true;
-         newState.dir = this.actor.direction;
-      }
-      
+
+      const newState = new MovementState();
+      newState.dir = this.actor.direction;
+      newState.moving = moving;
+
       if(!this.oldState.equals(newState)) {
          this.socket.emit('player-act', newState);
          this.oldState = newState;

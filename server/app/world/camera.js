@@ -25,7 +25,7 @@ export class FreeCamera {
          this.yMom = 200;
       }
       this.xMom *= 0.95;
-      this.yMom *= 0.95;   
+      this.yMom *= 0.95;
    }
 }
 

@@ -4,6 +4,8 @@ import {TheAssetManager} from 'tools/assets';
 import {TileSet} from 'gfx/tiles';
 import {Sprite} from 'gfx/sprite';
 
+let uuid = require('node-uuid');
+
 var Direction = {
    NORTH : 0,
    EAST: 1,
@@ -13,6 +15,7 @@ var Direction = {
 
 export class Actor {
    constructor(sprite, world) {
+      this.uuid = uuid.v1();
       this.sprites = [sprite];
       this.x = 0;
       this.y = 0;
@@ -22,25 +25,52 @@ export class Actor {
       this.xMom = 0;
       this.yMom = 0;
       this.world = world;
+      this.changed = true;
    }
    
    get currentLayer() {
       return this.world.layers[this.layer];
    }
    
-   update(dt) { 
-      for(const sprite of this.sprites) sprite.update(dt);
-      
+   update(dt) {
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
      
-      if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
-         this.colliding(nextX,nextY);
-      } else {
+      //if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
+         //this.colliding(nextX,nextY);
+      //} else {
          this.x = nextX;
          this.y = nextY;
+      //}
+   }
+
+   setState(state) {
+      this.dir = state.dir;
+      if(!state.moving) {
+         this.xMom = 0;
+         this.yMom = 0;
+         return;
       }
-   }  
+
+      switch(state.dir) {
+         case Direction.NORTH:
+            this.yMom = -30;
+            this.xMom = 0;
+            break;
+         case Direction.SOUTH:
+            this.yMom = 30;
+            this.xMom = 0;
+            break;
+         case Direction.WEST:
+            this.xMom = -30;
+            this.yMom = 0;
+            break;
+         case Direction.EAST:
+            this.xMom = 30;
+            this.yMom = 0;
+            break;
+      }
+   }
    
    colliding(x,y) {
    }
@@ -93,24 +123,5 @@ export class Moblin extends Actor {
    
    colliding(x,y) {
          this.direction = Math.floor(Math.random() * 4);
-   }
-}
-
-export class Player extends Actor {
-   constructor(world, controller) {
-      const sheet = TheAssetManager.get('sprite-link');
-      const tileset = new TileSet(sheet, 16, 16);      
-      super(new Sprite([tileset]),world);
-      this.w = 16;
-      this.h = 16;
-      this.controller = controller;
-      this.controller.actor = this;
-      this.direction = Direction.NORTH;
-   }
-   
-   update(dt) {
-      this.controller.update(dt);
-      this.sprites[0].currentAnimation = this.direction;
-      super.update(dt);
    }
 }
