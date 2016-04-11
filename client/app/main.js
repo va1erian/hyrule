@@ -124,12 +124,10 @@ function connectUser() {
 }
 
 function isUserConnected(data) {
-    console.log(data);
-    if(!data) {
-        $('.signin').css('visibility', 'hidden');
-        $('.game').css('visibility', 'visible');
-    }
-    else {
+    if(data) {
+        $('#signin').css('display', 'none');
+        $('#game').css('display', 'block');
+    } else {
         alert("Nom d'utilisateur déjà utilisé");
     }
 }
@@ -200,7 +198,7 @@ function init(assets) {
    loop.add(cam);
    loop.add(new Renderer(viewport));
 
-   socket.on('player-join', () => console.log('zob'));
+   socket.on('player-join', () => console.log('A player joined the room'));
 
    loop.start();
 }
