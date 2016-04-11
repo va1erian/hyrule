@@ -10,6 +10,19 @@ import { GameLoop } from 'tools/loop';
 import { TheAssetManager } from 'tools/assets';
 import { TheInput, Keys } from 'tools/input';
 import { PlayerCamera } from 'world/camera';
+import { SkinColor } from 'tools/SkinColor';
+
+$(document).ready(function() {
+    let mug = document.getElementById("mug");
+    let colorPicker = document.getElementById("color");
+
+    // Live skin color edition
+    let skinColor = new SkinColor(mug);
+    // Listener on input color tag
+    colorPicker.addEventListener("input", function() {
+        mug.src = skinColor.changeColor(colorPicker.value);
+    }, false);
+});
 
 var loop = new GameLoop();
 

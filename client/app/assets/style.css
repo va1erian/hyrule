@@ -28,7 +28,7 @@ html, body {
 	font-size: 3rem;
 }
 
-.signin form [type="text"] {
+.signin [type="text"] {
 	color: white;
 	text-align: center;
 	width: 300px;
@@ -48,63 +48,10 @@ html, body {
 
 }
 
-.colorChoice [type="radio"] {
-	display: none;
+.colorChoice [type="color"] {
+	width: 100%;
+	margin-bottom: 10px;
+	border: none;
+	background: none;
 }
 
-.colorChoice [type="radio"] + label {
-	float: left;
-	clear: none;
-	display: block;
-	padding-right: 1em;
-}
-
-.colorChoice [type="radio"] + label:last-child {
-	padding-right: 0;
-}
-
-.colorChoice [type="radio"] + label div.skin-black {
-	background-image: url("img/link_black.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-blue {
-	background-image: url("img/link_blue.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-green {
-	background-image: url("img/link_green.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-pink {
-	background-image: url("img/link_pink.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-purple {
-	background-image: url("img/link_purple.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-red {
-	background-image: url("img/link_red.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-yellow {
-	background-image: url("img/link_yellow.png");
-}
-
-.colorChoice [type="radio"] + label div.skin-img {
-	width: 48px;
-	height: 48px;
-	margin: 2px 0;
-	background-position: 100% 0%;
-	background-repeat: no-repeat;
-	background-size: 400%;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	-ms-transition: all 0.3s;
-	-o-transition: all 0.3s;
-	transition: all 0.3s;
-}
-
-.colorChoice [type="radio"]:checked + label div.skin-img {
-	background-position: 65% 0%;
-}
