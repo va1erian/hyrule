@@ -96,28 +96,26 @@ function getValidInputs() {
       return;
    }
    let inputs = {"pseudo" : pseudo, "skin" : skin};
+   return inputs;
 
 }
 
 
-function connectUser(data) {
+function connectUser() {
    let inputs = getValidInputs();
    if(inputs === undefined) {
       return;
    }
    socket.emit('connect user', inputs);
+   console.log(inputs);
 }
 
 
 $(window).keypress(function(e) {
     if(e.which == 13) {
-
+       connectUser();
        sendMessage();
     }
-});
-
-socket.on('connect user', function(data) {
-   connectUser(data);
 });
 
 socket.on('chat message', function (data) {

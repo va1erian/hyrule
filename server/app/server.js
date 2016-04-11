@@ -36,6 +36,7 @@ class Room {
    onPlayerAct(player, msg) {
       console.log(msg);
    }
+
 }
 
 class WorldState {
@@ -55,13 +56,17 @@ function startServer(port, path, callback) {
    
    let world = new WorldState();
    let nbParticipants = 0;
+   let room = new Room();
    app.use(express.static(Path.join(__dirname, path)));
    app.use(morgan('combined'));
 
    io.on('connection', (socket) => {
-      socket.users = [];
-      socket.on('connect user', function (data)) {
-
+      console.log('Hello');
+      socket.on('connect user', function (data) {
+         //TODO check if the user isn't already connected
+         console.log('server');
+         console.log(data);
+         room.addPlayer(data);
       });
       console.log('client connected');
       nbParticipants++;
