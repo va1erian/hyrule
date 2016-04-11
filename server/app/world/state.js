@@ -1,32 +1,4 @@
-import {Actor} from 'world/actor';
-
-class Player {
-   // TODO : Completer la classe player
-   /**
-    * couleur, nom, coordonnées
-    * @param socket
-    */
-   constructor(socket) {
-      this.socket = socket;
-      this.color = "green";
-      this.actor = new Actor();
-   }
-
-   get stringified() {
-      return JSON.stringify(this, (k, v) => {
-             if(k === 'socket')
-         return undefined;
-      else
-         return v;
-      });
-   }
-
-
-   get id() {
-      return this.actor.uuid;
-   }
-}
-
+import {PlayerActor} from 'world/actor';
 
 class Room {
    constructor(id) {
@@ -38,37 +10,25 @@ class Room {
       this.actors.push(player);
       player.socket.join(this.id);
       player.socket.on('player-act', msg => this.onPlayerAct(msg, player));
-
-      TheWorldState.io.to(this.id).emit('player-join', this.stringified);
+      TheWorldState.io.to(this.id).emit('player-join', this);
    }
 
    onPlayerAct(msg, player) {
-      console.log(msg);
-      player.actor.setState(msg);
+      player.setState(msg);
    }
-
-   get stringified() {
-      return JSON.stringify(this, (k,v) => {
-         if(k === 'socket')
-            return undefined;
-         else
-            return v;
-      });
-   }
-
-
+   
    update(dt) {
-      for(const player of this.actors) {
-         player.actor.update(dt);
-
-         if (player.actor.changed) {
-            this.broadcastPlayerUpdate(player);
+      for(const actor of this.actors) {
+         actor.update(dt);
+         
+         if (actor.changed) {
+            this.broadcastActorUpdate(actor);
          }
       }
    }
 
-   broadcastPlayerUpdate(player) {
-      TheWorldState.io.to(this.id).emit('player-update', player.stringified);
+   broadcastActorUpdate(actor) {
+      TheWorldState.io.to(this.id).emit('player-update', actor);
    }
 }
 
@@ -76,13 +36,16 @@ class WorldState {
    constructor() {
       this.layers = [];
       this.rooms  = new Map();
-      this.rooms.set('test', new Room('test'));
-
+      this.rooms.set('overworld', new Room('overworld'));
    }
 
    spawnPlayer(socket) {
-      let player = new Player(socket);
-      this.rooms.get('test').addPlayer(player);
+      let player = new PlayerActor(socket, this);
+      player.x = 1904;
+      player.y = 1328;
+      this.rooms.get('overworld').addPlayer(player);
+      player.socket.emit('player-welcome', player.uuid);
+
       return player;
    }
 

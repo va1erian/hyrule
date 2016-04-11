@@ -25,29 +25,25 @@ let socket = io.connect();
 function init(assets) {
    let tileset = new TileSet(assets.get('tileset-overworld'), 16,16);
    let worldTileProps = tileset.makeTileProps();
-   
-   worldTileProps[6]  |= TileType.TILE_WALKABLE;
-   worldTileProps[44] |= TileType.TILE_WALKABLE;
-   worldTileProps[45] |= TileType.TILE_WALKABLE;
-   
+  
    let tilemap = new TileMap(256,84, assets.get('map-overworld'), tileset);
    tilemap.tileProps = worldTileProps;
 
    TheWorldState.layers.push([tilemap, tileset]);
 
-   let controller =  new KeyboardController(socket);
-   let player = new Player(TheWorldState, controller);
-
-   //world.actors.push(player);0
-
-   const viewport = new ViewPort(TheWorldState, new Rectangle (0, 0, 256, 224));
-   const cam = new PlayerCamera(viewport, player);
-   loop.add(TheWorldState);
-   loop.add(cam);
-   loop.add(new Renderer(viewport));
-
-   socket.on('player-join', (el)  => TheWorldState.setActorList(JSON.parse(el)));
-   socket.on('player-update', (el) => TheWorldState.updateActor(JSON.parse(el)));
+   socket.on('player-join', (el)  => TheWorldState.setActorList(el));
+   socket.on('player-update', (el) => TheWorldState.refreshActor(el));
+   socket.on('player-welcome', (el) =>  {
+      TheWorldState.playerUUID = el;
+      const controller =  new KeyboardController(socket);
+      const viewport = new ViewPort(TheWorldState, new Rectangle (0, 0, 256, 224));
+            
+      const cam = new PlayerCamera(viewport, TheWorldState.localPlayer);
+      loop.add(TheWorldState);
+      loop.add(controller);
+      loop.add(cam);
+      loop.add(new Renderer(viewport));
+   });
    loop.start();
 }
 

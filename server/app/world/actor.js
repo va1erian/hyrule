@@ -2,7 +2,6 @@
 import {Rectangle} from 'gfx/utils';
 import {TheAssetManager} from 'tools/assets';
 import {TileSet} from 'gfx/tiles';
-import {Sprite} from 'gfx/sprite';
 
 let uuid = require('node-uuid');
 
@@ -14,13 +13,15 @@ var Direction = {
 };
 
 export class Actor {
-   constructor(sprite, world) {
+   constructor(world) {
       this.uuid = uuid.v1();
-      this.sprites = [sprite];
       this.x = 0;
       this.y = 0;
+      this.dir = Direction.NORTH;
+
       this.w = 0;
       this.h = 0;
+      
       this.layer = 0;
       this.xMom = 0;
       this.yMom = 0;
@@ -32,60 +33,74 @@ export class Actor {
       return this.world.layers[this.layer];
    }
    
+   get isPlayer() {
+      return this.socket !== undefined;
+   }
+   
    update(dt) {
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
      
       //if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
-         //this.colliding(nextX,nextY);
+         this.colliding(nextX,nextY);
       //} else {
          this.x = nextX;
          this.y = nextY;
       //}
    }
 
+   colliding(x,y) { }
+   
+   toJSON() {
+      return {
+         uuid : this.uuid, x: this.x, y: this.y, 
+         dir : this.dir, changed : this.changed,
+         moving: (this.xMom !== 0 || this.yMom !== 0)
+      };
+   }
+}
+
+export class PlayerActor extends Actor {
+   constructor(socket,world) {
+      super(world);
+      this.socket = socket;
+      this.color = 0;
+   }
+   
    setState(state) {
-      this.dir = state.dir;
       if(!state.moving) {
          this.xMom = 0;
          this.yMom = 0;
          return;
       }
+      this.dir = state.dir;
+
 
       switch(state.dir) {
          case Direction.NORTH:
-            this.yMom = -30;
+            this.yMom = -50;
             this.xMom = 0;
             break;
          case Direction.SOUTH:
-            this.yMom = 30;
+            this.yMom = 50;
             this.xMom = 0;
             break;
          case Direction.WEST:
-            this.xMom = -30;
+            this.xMom = -50;
             this.yMom = 0;
             break;
          case Direction.EAST:
-            this.xMom = 30;
+            this.xMom = 50;
             this.yMom = 0;
             break;
       }
    }
-   
-   colliding(x,y) {
-   }
-   
-   
-   paint(ctx, x, y) {
-      for(const sprite of this.sprites) sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
-   } 
 }
 
 export class Moblin extends Actor {
    constructor(world) {
-      const sheet = TheAssetManager.get('sprite-moblin');
+      super(world);
       const tileset = new TileSet(sheet, 16, 16);      
-      super(new Sprite([tileset]),world);
       this.w = 16;
       this.h = 16;
       this.direction = Direction.NORTH;
@@ -99,7 +114,6 @@ export class Moblin extends Actor {
    }
    
    update(dt) {
-      this.sprites[0].currentAnimation = this.direction;
       switch(this.direction) {
          case Direction.NORTH:
          this.yMom = -30;

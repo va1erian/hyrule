@@ -48,10 +48,11 @@ export class Actor {
    }  
 
    setState(state) {
-      console.log("player ", this.uuid, ": ", state.x);
+      console.log(state);
       this.x = state.x;
       this.y = state.y;
-      this.direction = state.dir;
+      this.dir = state.dir;
+      this.moving = state.moving;
    }
 
 
@@ -77,10 +78,10 @@ export class Moblin extends Actor {
       this.h = 8;
       this.direction = Direction.NORTH;
       
-      var dirChange = function() {
+      var dirChange = () => {
          this.direction = Math.floor(Math.random() * 4);
          setTimeout(dirChange, Math.floor(Math.random() * 1000) + 1000);
-      }.bind(this);
+      };
       
       dirChange();
    }
@@ -125,11 +126,11 @@ export class Player extends Actor {
       this.w = 14;
       this.h = 8;
 
-      this.direction = Direction.NORTH;
    }
    
    update(dt) {
-      this.sprites[0].currentAnimation = this.direction;
+      this.sprites[0].animPause = !this.moving;
+      this.sprites[0].currentAnimation = this.dir;
       super.update(dt);
    }
 }
