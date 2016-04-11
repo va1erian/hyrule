@@ -43,6 +43,7 @@ class Room {
    }
 
    onPlayerAct(msg, player) {
+      console.log(msg);
       player.actor.setState(msg);
    }
 

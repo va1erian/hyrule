@@ -3,7 +3,7 @@
 
 import { ViewPort } from 'gfx/viewport';
 import { TileSet, TileMap, TileType } from 'gfx/tiles';
-import { WorldState } from 'world/state';
+import { TheWorldState } from 'world/state';
 import { Moblin, Player, KeyboardController } from 'world/actor';
 import { Rectangle, Renderer } from 'gfx/utils';
 import { GameLoop } from 'tools/loop';
@@ -32,22 +32,22 @@ function init(assets) {
    
    let tilemap = new TileMap(256,84, assets.get('map-overworld'), tileset);
    tilemap.tileProps = worldTileProps;
-   var world = new WorldState();
-      
-   world.layers.push([tilemap, tileset]);
-   
-   let player = new Player(world, new KeyboardController(socket));  
 
-   world.actors.push(player);
+   TheWorldState.layers.push([tilemap, tileset]);
 
-   const viewport = new ViewPort(world, new Rectangle (0, 0, 256, 224));
+   let controller =  new KeyboardController(socket);
+   let player = new Player(TheWorldState, controller);
+
+   //world.actors.push(player);0
+
+   const viewport = new ViewPort(TheWorldState, new Rectangle (0, 0, 256, 224));
    const cam = new PlayerCamera(viewport, player);
-   loop.add(world);
+   loop.add(TheWorldState);
    loop.add(cam);
    loop.add(new Renderer(viewport));
 
-   socket.on('player-join', (el) => console.log("New player joined the server"));
-   socket.on('player-update', (el) => console.log(el));
+   socket.on('player-join', (el)  => TheWorldState.setActorList(JSON.parse(el)));
+   socket.on('player-update', (el) => TheWorldState.updateActor(JSON.parse(el)));
    loop.start();
 }
 

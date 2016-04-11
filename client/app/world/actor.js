@@ -25,6 +25,8 @@ export class Actor {
 
       this.world = world;
    }
+
+
    
    get currentLayer() {
       return this.world.layers[this.layer];
@@ -44,13 +46,23 @@ export class Actor {
          this.y = nextY;
       }
    }  
-   
+
+   setState(state) {
+      console.log("player ", this.uuid, ": ", state.x);
+      this.x = state.x;
+      this.y = state.y;
+      this.direction = state.dir;
+   }
+
+
    colliding(x,y) {
    }
    
    
    paint(ctx, x, y) {
-      for(const sprite of this.sprites) sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
+      for(const sprite of this.sprites)  {
+         sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
+      }
    } 
 }
 
@@ -102,22 +114,21 @@ export class Moblin extends Actor {
 }
 
 export class Player extends Actor {
-   constructor(world, controller) {
-      const sheet = TheAssetManager.get('sprite-link');
-      const tileset = new TileSet(sheet, 16, 16);      
+   constructor(uuid, world) {
+      const sheet   = TheAssetManager.get('sprite-link');
+      const tileset = new TileSet(sheet, 16, 16);
+
       super(new Sprite([tileset]),world);
+      this.uuid = uuid;
       this.offY = 8;
       this.offX = 2;
       this.w = 14;
       this.h = 8;
-      
-      this.controller = controller;
-      this.controller.actor = this;
+
       this.direction = Direction.NORTH;
    }
    
    update(dt) {
-      this.controller.update(dt);
       this.sprites[0].currentAnimation = this.direction;
       super.update(dt);
    }
@@ -145,21 +156,22 @@ export class KeyboardController {
    
    update(dt) {
       let moving = true;
+      const newState = new MovementState();
+      newState.dir = Direction.EAST;
+
 
       if(TheInput.pressed(Keys.RIGHT)) {
-         this.actor.direction = Direction.EAST;
+         newState.dir = Direction.EAST;
       } else if(TheInput.pressed(Keys.LEFT)) {
-         this.actor.direction = Direction.WEST;
+         newState.dir = Direction.WEST;
       }else if(TheInput.pressed(Keys.UP)) {
-         this.actor.direction = Direction.NORTH;
+         newState.dir = Direction.NORTH;
       } else if(TheInput.pressed(Keys.DOWN)) {
-         this.actor.direction = Direction.SOUTH;
+         newState.dir = Direction.SOUTH;
       } else {
          moving = false;
       }
 
-      const newState = new MovementState();
-      newState.dir = this.actor.direction;
       newState.moving = moving;
 
       if(!this.oldState.equals(newState)) {

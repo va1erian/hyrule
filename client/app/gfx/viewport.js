@@ -11,7 +11,7 @@ export class ViewPort {
          tmap.paint(ctx,tset,x,y,this.metrics);
       }
       
-      for(let actor of this.world.actors) {
+      for(let actor of this.world.actors.values()) {
          actor.paint(ctx, this.metrics.x, this.metrics.y);
       }
    }
