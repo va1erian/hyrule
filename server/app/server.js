@@ -14,8 +14,15 @@ var io = socketio().listen(server);
 
 
 class Player {
+
    constructor(socket) {
       this.socket = socket;
+      this.username = "";
+      this.skin = "";
+      if(!this.socket === undefined) {
+         this.username = this.socket.username;
+         this.skin = this.socket.skin;
+      }
    }
 }
 
@@ -27,14 +34,31 @@ class Room {
    }
    
    addPlayer(player) {
-      this.players.push(player);
-      player.socket.join(this.id);
-      player.socket.on('player-act', msg => this.onPlayerAct(player, msg));
-      io.to(this.id).emit('player-join');
+      if(!this.isUsernameAlreadyUsed(player.username)) {
+         this.players.push(player);
+         player.socket.join(this.id);
+         player.socket.on('player-act', msg => this.onPlayerAct(player, msg));
+         io.to(this.id).emit('player-join');
+         return true;
+      }
+      else {
+         return false;
+      }
    }
    
    onPlayerAct(player, msg) {
       console.log(msg);
+   }
+
+   isUsernameAlreadyUsed(playerUsername) {
+      console.log(playerUsername);
+      for(let i = 0; i < this.players.length; i++) {
+         console.log(this.players[i].username);
+         if(this.players[i].username === playerUsername) {
+            return true;
+         }
+      }
+      return false;
    }
 
 }
@@ -47,8 +71,7 @@ class WorldState {
    
    spawnPlayer(socket, room) {
       let player = new Player(socket);
-      this.rooms.get(room).addPlayer(player);
-      return player;
+      return this.rooms.get(room).addPlayer(player);
    }
 }
 
@@ -56,18 +79,19 @@ function startServer(port, path, callback) {
    
    let world = new WorldState();
    let nbParticipants = 0;
-   let room = new Room();
    app.use(express.static(Path.join(__dirname, path)));
    app.use(morgan('combined'));
 
    io.on('connection', (socket) => {
       socket.on('connect-user', function (data) {
-         socket.username = data.pseudo;
+         socket.username = data.username;
          socket.skin = data.skin;
-         //TODO check if the user isn't already connected
-         world.spawnPlayer(socket ,'test');
+         let result = world.spawnPlayer(socket ,'test');
+         console.log(result);
+         socket.emit('is-user-connected', result);
+         result ? console.log('client ' + data.username + ' already connected') :  console.log('client ' + data.username + ' connected');
       });
-      console.log('client connected');
+
       nbParticipants++;
       socket.nbParticipants = nbParticipants;
 

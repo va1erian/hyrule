@@ -94,21 +94,24 @@ function addMessageElement (element, options) {
 
 
 
-function checkInputs(pseudo, skin) {
-   if(pseudo === undefined || pseudo.replace(" ", "") === "") {
+function checkInputs(username, skin) {
+   if(username === undefined || username.trim() === "") {
       return false;
+   }
+   if(skin === undefined) {
+       return false;
    }
    return true;
 }
 
 function getValidInputs() {
-   let pseudo = $('#name').val();
-   let skin = $('input[name=skin]:checked').val();
-   if(!checkInputs(pseudo, skin)) {
-      alert('Veuillez saisir un pseudo valide et un skin');
+   let username = $('#username').val();
+   let skin = $('#color').val();
+   if(!checkInputs(username, skin)) {
+      alert('Veuillez saisir un pseudo et un skin valide ');
       return;
    }
-   let inputs = {"pseudo" : pseudo, "skin" : skin};
+   let inputs = {"username" : username, "skin" : skin};
    return inputs;
 }
 
@@ -118,7 +121,17 @@ function connectUser() {
       return;
    }
    socket.emit('connect-user', inputs);
-   console.log(inputs);
+}
+
+function isUserConnected(data) {
+    console.log(data);
+    if(!data) {
+        $('.signin').css('visibility', 'hidden');
+        $('.game').css('visibility', 'visible');
+    }
+    else {
+        alert("Nom d'utilisateur déjà utilisé");
+    }
 }
 
 
@@ -127,6 +140,10 @@ $(window).keypress(function(e) {
        connectUser();
        sendMessage();
     }
+});
+
+socket.on('is-user-connected', function (data) {
+    isUserConnected(data);
 });
 
 socket.on('chat message', function (data) {
