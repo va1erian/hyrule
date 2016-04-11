@@ -1,14 +1,10 @@
 
 'use strict';
-
-import "app-module-path/register";
 import express from 'express';
 import socketio from 'socket.io';
 import morgan from 'morgan';
 import http from 'http';
 import Path from 'path';
-
-import {Actor}  from 'world/actor';
 
 var app = express();
 var server = http.createServer(app);
@@ -58,16 +54,39 @@ class WorldState {
 function startServer(port, path, callback) {
    
    let world = new WorldState();
-
+   let nbParticipants = 0;
    app.use(express.static(Path.join(__dirname, path)));
    app.use(morgan('combined'));
-   
+
    io.on('connection', (socket) => {
       console.log('client connected');
+      nbParticipants++;
+      socket.nbParticipants = nbParticipants;
+
       world.spawnPlayer(socket ,'test');
+
+      socket.broadcast.emit('user joined', {
+         username: "Thug",
+         nbParticipants: nbParticipants
+      });
+
+      socket.on('chat message', function (data) {
+            console.log('new message:' + data);
+            socket.broadcast.emit('chat message', {
+               username: "Thug",
+               message: data
+            });
+         });
+
+      socket.on('disconnect', function (data) {
+         console.log('user ' +socket.username+' disconnected');
+         io.broadcast.emit('user disconnected');
+   });
+
    });
 
    server.listen(port, callback);
 }
+
 
 startServer(3000, '../../client/build', () => console.log('Server started'));
