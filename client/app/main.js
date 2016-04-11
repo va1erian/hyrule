@@ -110,16 +110,14 @@ function getValidInputs() {
    }
    let inputs = {"pseudo" : pseudo, "skin" : skin};
    return inputs;
-
 }
-
 
 function connectUser() {
    let inputs = getValidInputs();
    if(inputs === undefined) {
       return;
    }
-   socket.emit('connect user', inputs);
+   socket.emit('connect-user', inputs);
    console.log(inputs);
 }
 
@@ -189,5 +187,3 @@ function init(assets) {
 
    loop.start();
 }
-
-

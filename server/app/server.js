@@ -61,12 +61,11 @@ function startServer(port, path, callback) {
    app.use(morgan('combined'));
 
    io.on('connection', (socket) => {
-      console.log('Hello');
-      socket.on('connect user', function (data) {
+      socket.on('connect-user', function (data) {
+         socket.username = data.pseudo;
+         socket.skin = data.skin;
          //TODO check if the user isn't already connected
-         console.log('server');
-         console.log(data);
-         room.addPlayer(data);
+         world.spawnPlayer(socket ,'test');
       });
       console.log('client connected');
       nbParticipants++;
@@ -89,7 +88,7 @@ function startServer(port, path, callback) {
 
       socket.on('disconnect', function (data) {
          console.log('user ' +socket.username+' disconnected');
-         io.broadcast.emit('user disconnected');
+         socket.broadcast.emit('user disconnected');
    });
 
    });
