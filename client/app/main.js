@@ -80,10 +80,44 @@ function addMessageElement (element, options) {
 }
 
 
+
+function checkInputs(pseudo, skin) {
+   if(pseudo === undefined || pseudo.replace(" ", "") === "") {
+      return false;
+   }
+   return true;
+}
+
+function getValidInputs() {
+   let pseudo = $('#name').val();
+   let skin = $('input[name=skin]:checked').val();
+   if(!checkInputs(pseudo, skin)) {
+      alert('Veuillez saisir un pseudo valide et un skin');
+      return;
+   }
+   let inputs = {"pseudo" : pseudo, "skin" : skin};
+
+}
+
+
+function connectUser(data) {
+   let inputs = getValidInputs();
+   if(inputs === undefined) {
+      return;
+   }
+   socket.emit('connect user', inputs);
+}
+
+
 $(window).keypress(function(e) {
     if(e.which == 13) {
-        sendMessage();
+
+       sendMessage();
     }
+});
+
+socket.on('connect user', function(data) {
+   connectUser(data);
 });
 
 socket.on('chat message', function (data) {

@@ -59,6 +59,10 @@ function startServer(port, path, callback) {
    app.use(morgan('combined'));
 
    io.on('connection', (socket) => {
+      socket.users = [];
+      socket.on('connect user', function (data)) {
+
+      });
       console.log('client connected');
       nbParticipants++;
       socket.nbParticipants = nbParticipants;
