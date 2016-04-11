@@ -13,14 +13,14 @@ import { PlayerCamera } from 'world/camera';
 import { SkinColor } from 'tools/SkinColor';
 
 $(document).ready(function() {
-    let mug = document.getElementById("mug");
-    let colorPicker = document.getElementById("color");
-
+    let skinImg = document.getElementById('skinImg');
+    let colorPicker = document.getElementById('color');
+    
     // Live skin color edition
-    let skinColor = new SkinColor(mug);
+    let skinColor = new SkinColor(skinImg);
     // Listener on input color tag
     colorPicker.addEventListener("input", function() {
-        mug.src = skinColor.changeColor(colorPicker.value);
+        skinImg.src = skinColor.changeColor(colorPicker.value);
     }, false);
 });
 
