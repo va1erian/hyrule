@@ -49,8 +49,21 @@ function sendMessage () {
 }
 
 function addChatMessage (data, options) {
+    options = options || {};
 
-   $('.messages').append($('<li>').text(data.message));
+    var $usernameDiv = $('<span class="username"/>')
+        .text(data.username)
+        .css('color', 'blue');
+    var $messageBodyDiv = $('<span class="messageBody">')
+        .text(data.message);
+
+    //var typingClass = data.typing ? 'typing' : '';
+    var $messageDiv = $('<li class="message"/>')
+        .data('username', data.username)
+        //.addClass(typingClass)
+        .append($usernameDiv, $messageBodyDiv);
+
+    addMessageElement($messageDiv, options);
 }
 
 function addNewParticipantsMessage (data) {
@@ -85,7 +98,7 @@ function addMessageElement (element, options) {
         $el.hide().fadeIn(FADE_TIME);
     }
     if (options.prepend) {
-        $(messages).prepend($el);
+        $('.messages').prepend($el);
     } else {
         $('.messages').append($el);
     }
@@ -149,13 +162,13 @@ socket.on('chat message', function (data) {
 });
 
 socket.on('user joined', function (data) {
-    console.log('joined');
     logInfo(data.username + ' joined');
     addNewParticipantsMessage(data);
 });
 
-socket.on('disconnect', function (data) {
-    console.log('disconnected');
+socket.on('user disconnected', function (data) {
+    logInfo(data.username + ' left');
+    addNewParticipantsMessage(data);
 });
 
 function init(assets) {

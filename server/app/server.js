@@ -7,14 +7,9 @@ import morgan from 'morgan';
 import http from 'http';
 import Path from 'path';
 
-import {Actor} from 'world/actor';
-import {TheWorldState} from 'world/state';
-import {TheAssetManager} from 'tools/assets';
-import {TileSet, TileType, TileMap} from 'gfx/tiles';
-
-let app = express();
-let server = http.createServer(app);
-let io = socketio().listen(server);
+var app = express();
+var server = http.createServer(app);
+var io = socketio().listen(server);
 
 /* global __dirname */
 
@@ -65,42 +60,33 @@ function startServer(port, path, callback) {
 
        nbParticipants++;
        socket.nbParticipants = nbParticipants;
-       console.log("nbParticipants:", socket.nbParticipants);
        
        socket.broadcast.emit('user joined', {
            username: "Thug",
            nbParticipants: nbParticipants
        });
 
-       socket.on('chat message', function (data) {
-           console.log('new message:' + data);
-           socket.broadcast.emit('chat message', {
+      socket.on('chat message', function (data) {
+            console.log('new message:' + data);
+            socket.broadcast.emit('chat message', {
                username: "Thug",
                message: data
-           });
-       });
+            });
+         });
 
+      socket.on('disconnect', function (data) {
+         console.log('user ' +socket.username+' disconnected');
+         nbParticipants--;
+         socket.broadcast.emit('user disconnected', {
+            username: "Anonymous", //replace with socket.username
+            nbParticipants: nbParticipants
+         });
+      });
 
-       /*socket.on('disconnect', function (data) {
-           nbParticipants--;
-           console.log("disconnect:", socket.username);
-           if (!(socket.username === undefined)) {
-               //world.rooms.get(socket.room).players.delete(socket.username);
-               console.log('user ' + socket.username + ' disconnected');
-               socket.broadcast.emit(socket.username + 'has disconnected');
-           } else {
-               console.log('Unknown user disconnected');
-               socket.broadcast.emit('Unknown user has disconnected');
-           }
-       });*/
    });
-    
 
-    server.listen(port, callback);
+   server.listen(port, callback);
 }
 
-function tick() {
-    TheWorldState.update(1/60);
-    setTimeout(tick, 17);
-}
 
+startServer(3000, '../../client/build', () => console.log('Server started'));

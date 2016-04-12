@@ -4,7 +4,7 @@ export const Keys = {
    UP: 38,
    RIGHT: 39,
    DOWN: 40,
-   ATTACK: 90
+   ATTACK: 17
 }
 
 const codes = new Set(Object.keys(Keys).map(k => Keys[k]));
