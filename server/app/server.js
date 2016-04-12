@@ -60,7 +60,7 @@ function startServer(port, path, callback) {
 
    io.on('connection', (socket) => {
       console.log('client connected');
-      nbParticipants++;
+      nbParticipants++; //to be added when the user log in
       socket.nbParticipants = nbParticipants;
 
       world.spawnPlayer(socket ,'test');
@@ -80,7 +80,11 @@ function startServer(port, path, callback) {
 
       socket.on('disconnect', function (data) {
          console.log('user ' +socket.username+' disconnected');
-         io.broadcast.emit('user disconnected');
+         nbParticipants--;
+         socket.broadcast.emit('user disconnected', {
+            username: "Anonymous", //replace with socket.username
+            nbParticipants: nbParticipants
+         });
    });
 
    });

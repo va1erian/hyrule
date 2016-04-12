@@ -14,11 +14,3 @@ exports.config =
       joinTo: 'app.css'
     templates:
       joinTo: 'app.js'
-  plugins:
-   jshint:
-      pattern: /^app[\\\/].*\.js$/ # matches any js files under the app/ dir
-      options:
-         bitwise: true
-         curly: true
-         esversion: 6
-      warnOnly: true
