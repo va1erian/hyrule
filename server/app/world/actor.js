@@ -64,7 +64,7 @@ export class PlayerActor extends Actor {
    constructor(socket,world) {
       super(world);
       this.socket = socket;
-      this.color = 0;
+      this.color = "";
    }
    
    setState(state) {

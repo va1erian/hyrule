@@ -48,7 +48,6 @@ export class Actor {
    }  
 
    setState(state) {
-      console.log(state);
       this.x = state.x;
       this.y = state.y;
       this.dir = state.dir;

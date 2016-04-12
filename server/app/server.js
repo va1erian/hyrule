@@ -44,7 +44,9 @@ function initWorld(assets) {
    TheWorldState.layers.push([tilemap, tileset]); 
 }
 
-function startServer(port, path, callback) { 
+function startServer(port, path, callback) {
+    let nbParticipants = 0;
+
    app.use(express.static(Path.join(__dirname, path)));
    app.use(morgan('combined'));
       
@@ -56,9 +58,8 @@ function startServer(port, path, callback) {
                socket.username = data.username;
                socket.skin = data.skin;
                TheWorldState.spawnPlayer(socket);
-               console.log("Player added?", result);
-               socket.emit('is-user-connected', result);
-               result ? console.log('client ' + data.username + ' connected') : console.log('client ' + data.username + ' already connected');
+               socket.emit('is-user-connected', true);
+               //result ? console.log('client ' + data.username + ' connected') : console.log('client ' + data.username + ' already connected');
            }
        });
 
@@ -79,18 +80,19 @@ function startServer(port, path, callback) {
            });
        });
 
-       socket.on('disconnect', function (data) {
+
+       /*socket.on('disconnect', function (data) {
            nbParticipants--;
            console.log("disconnect:", socket.username);
            if (!(socket.username === undefined)) {
-               world.rooms.get(socket.room).players.delete(socket.username);
+               //world.rooms.get(socket.room).players.delete(socket.username);
                console.log('user ' + socket.username + ' disconnected');
                socket.broadcast.emit(socket.username + 'has disconnected');
            } else {
                console.log('Unknown user disconnected');
                socket.broadcast.emit('Unknown user has disconnected');
            }
-       });
+       });*/
    });
     
 

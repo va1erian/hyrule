@@ -3,7 +3,7 @@
 
 import { ViewPort } from 'gfx/viewport';
 import { TileSet, TileMap, TileType } from 'gfx/tiles';
-import { WorldState } from 'world/state';
+import { TheWorldState } from 'world/state';
 import { Moblin, Player, KeyboardController } from 'world/actor';
 import { Rectangle, Renderer } from 'gfx/utils';
 import { GameLoop } from 'tools/loop';
