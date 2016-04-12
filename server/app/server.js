@@ -7,6 +7,11 @@ import morgan from 'morgan';
 import http from 'http';
 import Path from 'path';
 
+import {Actor} from 'world/actor';
+import {TheWorldState} from 'world/state';
+import {TheAssetManager} from 'tools/assets';
+import {TileSet, TileType, TileMap} from 'gfx/tiles';
+
 var app = express();
 var server = http.createServer(app);
 var io = socketio().listen(server);
@@ -14,7 +19,6 @@ var io = socketio().listen(server);
 /* global __dirname */
 
 TheWorldState.io = io;
-
 
 TheAssetManager
    .push('map-overworld', 'data/overworld.map')
@@ -40,6 +44,7 @@ function initWorld(assets) {
 }
 
 function startServer(port, path, callback) {
+    
     let nbParticipants = 0;
 
    app.use(express.static(Path.join(__dirname, path)));
