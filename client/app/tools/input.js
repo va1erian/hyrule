@@ -17,13 +17,13 @@ class Input {
          if(codes.has(e.keyCode)) e.preventDefault();
          
          delete this._pressed[e.keyCode];
-      }, false)
+      }, false);
       
       window.addEventListener('keydown', (e) => {
          if(codes.has(e.keyCode)) e.preventDefault();
          
          this._pressed[e.keyCode] = true;
-      }, false)
+      }, false);
    }
    
    pressed(key) {

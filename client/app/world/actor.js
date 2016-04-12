@@ -25,6 +25,8 @@ export class Actor {
 
       this.world = world;
    }
+
+
    
    get currentLayer() {
       return this.world.layers[this.layer];
@@ -44,13 +46,24 @@ export class Actor {
          this.y = nextY;
       }
    }  
-   
+
+   setState(state) {
+      console.log(state);
+      this.x = state.x;
+      this.y = state.y;
+      this.dir = state.dir;
+      this.moving = state.moving;
+   }
+
+
    colliding(x,y) {
    }
    
    
    paint(ctx, x, y) {
-      for(const sprite of this.sprites) sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
+      for(const sprite of this.sprites)  {
+         sprite.paint(ctx, Math.round(this.x) - x, Math.round(this.y) - y);
+      }
    } 
 }
 
@@ -65,10 +78,10 @@ export class Moblin extends Actor {
       this.h = 8;
       this.direction = Direction.NORTH;
       
-      var dirChange = function() {
+      var dirChange = () => {
          this.direction = Math.floor(Math.random() * 4);
          setTimeout(dirChange, Math.floor(Math.random() * 1000) + 1000);
-      }.bind(this);
+      };
       
       dirChange();
    }
@@ -102,23 +115,22 @@ export class Moblin extends Actor {
 }
 
 export class Player extends Actor {
-   constructor(world, controller) {
-      const sheet = TheAssetManager.get('sprite-link');
-      const tileset = new TileSet(sheet, 16, 16);      
+   constructor(uuid, world) {
+      const sheet   = TheAssetManager.get('sprite-link');
+      const tileset = new TileSet(sheet, 16, 16);
+
       super(new Sprite([tileset]),world);
+      this.uuid = uuid;
       this.offY = 8;
       this.offX = 2;
       this.w = 14;
       this.h = 8;
-      
-      this.controller = controller;
-      this.controller.actor = this;
-      this.direction = Direction.NORTH;
+
    }
    
    update(dt) {
-      this.controller.update(dt);
-      this.sprites[0].currentAnimation = this.direction;
+      this.sprites[0].animPause = !this.moving;
+      this.sprites[0].currentAnimation = this.dir;
       super.update(dt);
    }
 }
@@ -131,9 +143,9 @@ class MovementState {
    }
    
    equals(obj) {
-      return this.moving == obj.moving &&
-         this.attacking == obj.attacking &&
-         this.dir == obj.dir;
+      return this.moving === obj.moving &&
+         this.attacking === obj.attacking &&
+         this.dir === obj.dir;
    }
 }
 
@@ -144,33 +156,25 @@ export class KeyboardController {
    }
    
    update(dt) {
-      if(TheInput.pressed(Keys.RIGHT)) {
-         this.actor.direction = Direction.EAST;
-         this.actor.xMom = 48; 
-      } else if(TheInput.pressed(Keys.LEFT)) {
-         this.actor.direction = Direction.WEST;
-         this.actor.xMom = -48; 
-      } else {
-         this.actor.xMom = 0;
-      }
-      
-      if(TheInput.pressed(Keys.UP)) {
-         this.actor.direction = Direction.NORTH;
-         this.actor.yMom = -48;
+      let moving = true;
+      const newState = new MovementState();
+      newState.dir = Direction.EAST;
 
+
+      if(TheInput.pressed(Keys.RIGHT)) {
+         newState.dir = Direction.EAST;
+      } else if(TheInput.pressed(Keys.LEFT)) {
+         newState.dir = Direction.WEST;
+      }else if(TheInput.pressed(Keys.UP)) {
+         newState.dir = Direction.NORTH;
       } else if(TheInput.pressed(Keys.DOWN)) {
-         this.actor.direction = Direction.SOUTH;
-         this.actor.yMom = 48;
+         newState.dir = Direction.SOUTH;
       } else {
-         this.actor.yMom = 0;
+         moving = false;
       }
-      
-      let newState = new MovementState();
-      if(this.actor.xMom !== 0 || this.actor.yMom !== 0) {
-         newState.moving = true;
-         newState.dir = this.actor.direction;
-      }
-      
+
+      newState.moving = moving;
+
       if(!this.oldState.equals(newState)) {
          this.socket.emit('player-act', newState);
          this.oldState = newState;

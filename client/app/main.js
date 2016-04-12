@@ -161,44 +161,26 @@ socket.on('disconnect', function (data) {
 function init(assets) {
    let tileset = new TileSet(assets.get('tileset-overworld'), 16,16);
    let worldTileProps = tileset.makeTileProps();
-
-   worldTileProps[6]  |= TileType.TILE_WALKABLE;
-   worldTileProps[44] |= TileType.TILE_WALKABLE;
-   worldTileProps[45] |= TileType.TILE_WALKABLE;
-
+  
    let tilemap = new TileMap(256,84, assets.get('map-overworld'), tileset);
    tilemap.tileProps = worldTileProps;
-   var world = new WorldState();
 
-   world.layers.push([tilemap, tileset]);
+   TheWorldState.layers.push([tilemap, tileset]);
 
-   let player = new Player(world, new KeyboardController(socket));
-
-   do {
-      player.x = Math.random() * 4000 | 0;
-      player.y = Math.random() * 1400 | 0;
-   } while(tilemap.isColliding(player));
-
-   world.actors.push(player);
-
-   for(var i = 0; i < 800; i++) {
-      let mob =  new Moblin(world);
-
-      do {
-         mob.x = Math.random() * 4000 | 0;
-         mob.y = Math.random() * 1400 | 0;
-      } while(tilemap.isColliding(mob));
-
-      world.actors.push(mob);
-   }
-
-   const viewport = new ViewPort(world, new Rectangle (0, 0, 256, 224));
-   const cam = new PlayerCamera(viewport, player);
-   loop.add(world);
-   loop.add(cam);
-   loop.add(new Renderer(viewport));
-
-   socket.on('player-join', () => console.log('A player joined the room'));
-
+   socket.on('player-join', (el)  => TheWorldState.setActorList(el));
+   socket.on('player-update', (el) => TheWorldState.refreshActor(el));
+   socket.on('player-welcome', (el) =>  {
+      TheWorldState.playerUUID = el;
+      const controller =  new KeyboardController(socket);
+      const viewport = new ViewPort(TheWorldState, new Rectangle (0, 0, 256, 224));
+            
+      const cam = new PlayerCamera(viewport, TheWorldState.localPlayer);
+      loop.add(TheWorldState);
+      loop.add(controller);
+      loop.add(cam);
+      loop.add(new Renderer(viewport));
+   });
    loop.start();
 }
+
+

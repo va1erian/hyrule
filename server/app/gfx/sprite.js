@@ -9,7 +9,6 @@ export class Sprite {
       this.animSpeed = 0.2;
       this.timer = 0;
 
-      
       this.x = 0;
       this.y = 0;
       this.w = 0;

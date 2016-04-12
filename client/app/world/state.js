@@ -1,14 +1,34 @@
+import { Actor, Player } from 'world/actor';
 
-
-export class WorldState {
+class WorldState {
    constructor() {
       this.layers = [];
-      this.actors = [];
+      this.playerUUID = undefined;
+      this.actors = new Map();
       this.worldSector = 0;
       this.subSector   = 0;
    }
    
    update(dt) {
-      for(const actor of this.actors) actor.update(dt);
+      for(const actor of this.actors.values()) actor.update(dt);
+   }
+
+   setActorList(room) {
+      for(let i of room.actors) {
+         let actor = new Player(i.uuid,TheWorldState);
+         actor.setState(i);
+         this.actors.set(actor.uuid, actor);
+      }
+   }
+
+   refreshActor(msg) {
+      let actor = this.actors.get(msg.uuid);
+      actor.setState(msg);
+   }
+   
+   get localPlayer() {
+      return this.actors.get(this.playerUUID);
    }
 }
+
+export var TheWorldState = new WorldState();

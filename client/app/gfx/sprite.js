@@ -7,6 +7,7 @@ export class Sprite {
       this.maxFrame = this.sheets[0].h;
       this.currentFrame = 0;
       this.animSpeed = 0.2;
+      this.animPause = false;
       this.timer = 0;
 
       
@@ -25,8 +26,9 @@ export class Sprite {
       this.timer += dt;
       if(this.timer >= this.animSpeed || this.timer < 0) {
          this.timer = 0;
-         this.currentFrame = (this.currentFrame + 1) % this.maxFrame;
-
+         if(!this.animPause) {
+            this.currentFrame = (this.currentFrame + 1) % this.maxFrame;
+         }
       }
 
    }

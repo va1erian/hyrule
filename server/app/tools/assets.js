@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 class AssetManager {
    constructor() {
       this.queue   = [];
@@ -5,24 +7,21 @@ class AssetManager {
       this.assets = new Map();
    }
    
-   push(name, url) {
-      const ext = getFileExtension(url);
+   push(name, path) {
       this.names.push(name);
-      if(ext == 'gif' || ext == 'png' || ext == 'jpg') {
-         this.queue.push(fetchImage(url));
-      } else {
-         this.queue.push(fetchBlob(url));
-      }
-      
+      this.queue.push(fetch(path));
+
       return this;
    }
    
    then(cb) {
-      Promise.all(this.queue).then((data) => {
+      Promise.all(this.queue)
+         .catch((e) => console.error(e))
+         .then((data) => {
          for(let i = 0; i < data.length; ++i) {
             this.assets.set(this.names[i], data[i]);
          }
-         
+                  
          cb(this);
       });
    }
@@ -34,41 +33,16 @@ class AssetManager {
 
 export var TheAssetManager = new AssetManager();
 
-function fetchBlob(url) {
-   
+function fetch(path) {
    return new Promise((resolve, reject) => {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'arraybuffer';
-      
-      xhr.onload = function() {
-         resolve(this.response);
-      }
-      
-      xhr.onerror = function() {
-         reject(Error('failed to load ' + url));
-      }
-      
-      xhr.send();
+      fs.readFile(path, (err, data) => {
+         if(err) 
+            reject(err);
+         else
+            resolve(data); 
+      });
    });
 }
 
-function fetchImage(url) {
-   return new Promise((resolve, reject) => {
-      var image = new Image();
-      image.src = url;
-   
-      image.onload = function() {
-         resolve(image);
-      }
-      
-      image.onerror = function() {
-         reject(Error('failed to load ' + url));
-      }
-   });   
-}
 
 
-function getFileExtension(filename) {
-    return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
-}
