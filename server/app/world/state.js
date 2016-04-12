@@ -16,14 +16,39 @@ class Room {
    onPlayerAct(msg, player) {
       player.setState(msg);
    }
-   
+
+   removePlayer(player){
+      this.actors[this.actors.indexOf(player)].socket.disconnect();
+      this.actors.splice(this.actors.indexOf(player), 1);
+   }
+
+   playerBySocket(socket){
+      for(const actor of this.actors) {
+         if (actor instanceof PlayerActor){
+            if (actor.socket === socket){
+               return actor;
+            }
+         }
+      }
+
+      return false;
+   }
+
    update(dt) {
       for(const actor of this.actors) {
-         actor.update(dt);
-         
-         if (actor.changed) {
-            this.broadcastActorUpdate(actor);
+         if (actor instanceof PlayerActor && !actor.active){
+            this.removePlayer(actor);
+            console.log('Client removed from array');
+            TheWorldState.io.to(this.id).emit('player-join', this);
+            return;
+
+         } else{
+            actor.update(dt);
+            if (actor.changed) {
+               this.broadcastActorUpdate(actor);
+            }
          }
+
       }
    }
 

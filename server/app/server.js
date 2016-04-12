@@ -48,16 +48,24 @@ function initWorld(assets) {
 function startServer(port, path, callback) { 
    app.use(express.static(Path.join(__dirname, path)));
    app.use(morgan('combined'));
-      
-   io.on('connection', (socket) => {
-       console.log('client connected : ', socket.handshake.address);
-       TheWorldState.spawnPlayer(socket);
+   io.sockets.on('connection', function (socket) {
+        console.log('client connected : ', socket.handshake.address);
+        TheWorldState.spawnPlayer(socket);
+
+       socket.on('disconnect', function()  {
+            console.log('client disconnected : ', socket.handshake.address);
+            console.log('TODO remove from WorldState');
+            let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
+            if (disconnectedActor){
+                disconnectedActor.active = false;
+                //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
+            }
+
+        });
+
    });
    
-   io.on('disconnect', (socket) => {
-       console.log('client disconnected : ', socket.handshake.address);
-       console.log('TODO remove from WorldState');
-   })
+
 
     server.listen(port, callback);
 }

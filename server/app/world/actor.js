@@ -65,6 +65,7 @@ export class PlayerActor extends Actor {
       super(world);
       this.socket = socket;
       this.color = 0;
+      this.active = true;
    }
    
    setState(state) {
