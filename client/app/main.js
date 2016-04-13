@@ -158,6 +158,7 @@ socket.on('is-user-connected', function (data) {
 });
 
 socket.on('chat message', function (data) {
+    console.log("chat:", data);
     addChatMessage(data);
 });
 

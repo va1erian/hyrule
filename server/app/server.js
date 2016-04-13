@@ -21,88 +21,94 @@ let io = socketio().listen(server);
 TheWorldState.io = io;
 
 TheAssetManager
-   .push('map-overworld', 'data/overworld.map')
-   .then(main);
+    .push('map-overworld', 'data/overworld.map')
+    .then(main);
 
 function main(assets) {
-   console.log('MMOZ server!')
-   initWorld(assets);
-   startServer(3000, '../../client/build', () => console.log('Server started'));
-   tick();
+    console.log('MMOZ server!')
+    initWorld(assets);
+    startServer(3000, '../../client/build', () => console.log('Server started'));
+    tick();
 }
 
 function initWorld(assets) {
-   let tileset = new TileSet(114); //114 tiles in tileset
-   let worldTileProps = tileset.makeTileProps();
-   worldTileProps[6]  |= TileType.TILE_WALKABLE;
-   worldTileProps[44] |= TileType.TILE_WALKABLE;
-   worldTileProps[45] |= TileType.TILE_WALKABLE;
-   let tilemap = new TileMap(256, 84, assets.get('map-overworld'), tileset);
-   tilemap.tileProps = worldTileProps;
-  
-   TheWorldState.layers.push([tilemap, tileset]); 
+    let tileset = new TileSet(114); //114 tiles in tileset
+    let worldTileProps = tileset.makeTileProps();
+    worldTileProps[6] |= TileType.TILE_WALKABLE;
+    worldTileProps[44] |= TileType.TILE_WALKABLE;
+    worldTileProps[45] |= TileType.TILE_WALKABLE;
+    let tilemap = new TileMap(256, 84, assets.get('map-overworld'), tileset);
+    tilemap.tileProps = worldTileProps;
+
+    TheWorldState.layers.push([tilemap, tileset]);
 }
 
 function startServer(port, path, callback) {
-    
+
     let nbParticipants = 0;
 
-   app.use(express.static(Path.join(__dirname, path)));
-   app.use(morgan('combined'));
-      
-   io.on('connection', (socket) => {
-       console.log('client connected : ', socket.handshake.address);
+    app.use(express.static(Path.join(__dirname, path)));
+    app.use(morgan('combined'));
 
-       socket.on('connect-user', function (data) {
-           if (!(data.username === undefined) && !(data.skin === undefined)) {
-               socket.username = data.username;
-               socket.skin = data.skin;
-               TheWorldState.spawnPlayer(socket);
-               socket.emit('is-user-connected', true);
-               //result ? console.log('client ' + data.username + ' connected') : console.log('client ' + data.username + ' already connected');
-           }
-       });
+    io.on('connection', (socket) => {
+        let userAdded = false;
+        console.log('client connected : ', socket.handshake.address);
 
-       nbParticipants++;
-       socket.nbParticipants = nbParticipants;
-       
-       socket.broadcast.emit('user joined', {
-           username: "Thug",
-           nbParticipants: nbParticipants
-       });
+        socket.on('connect-user', function (data) {
+            if(userAdded) return;
+            if (!(data.username === undefined) && !(data.skin === undefined)) {
+                console.log("uA.connect-user", userAdded);
+                socket.username = data.username;
+                socket.skin = data.skin;
+                TheWorldState.spawnPlayer(socket);
+                userAdded = true;
+                socket.emit('is-user-connected', true);
+                
+                nbParticipants++;
+                socket.nbParticipants = nbParticipants;
 
-      socket.on('chat message', function (data) {
-            console.log('new message:' + data);
-            socket.broadcast.emit('chat message', {
-               username: "Thug",
-               message: data
-            });
-         });
+                console.log("uA.user-joined", userAdded);
+                socket.broadcast.emit('user joined', {
+                    username: "Thug", // TODO: use real username
+                    nbParticipants: nbParticipants
+                });
+            }
+        });
 
-      socket.on('disconnect', function (data) {
-         console.log('user ' +socket.username+' disconnected');
-         nbParticipants--;
-          console.log('client disconnected : ', socket.handshake.address);
-          console.log('TODO remove from WorldState');
-          let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
-          if (disconnectedActor){
-              disconnectedActor.active = false;
-              //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
-          }
-         socket.broadcast.emit('user disconnected', {
-            username: "Anonymous", //replace with socket.username
-            nbParticipants: nbParticipants
-         });
-      });
+        socket.on('chat message', function (data) {
+            console.log("uA.chat-msg", userAdded);
+            if (userAdded) {
+                console.log('new message:' + data);
+                socket.broadcast.emit('chat message', {
+                    username: "Thug",
+                    message: data
+                });
+            }
+        });
 
-   });
+        socket.on('disconnect', function (data) {
+            if (userAdded) {
+                console.log('user ' + socket.username + ' disconnected');
+                nbParticipants--; // FIXME: do not decrement if zero
+                console.log('client disconnected : ', socket.handshake.address);
+                console.log('TODO remove from WorldState');
+                let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
+                if (disconnectedActor) {
+                    disconnectedActor.active = false;
+                    //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
+                }
+                socket.broadcast.emit('user disconnected', {
+                    username: "Anonymous", //replace with socket.username
+                    nbParticipants: nbParticipants
+                });
+            }
+        });
+    });
 
-   server.listen(port, callback);
+    server.listen(port, callback);
 }
 
 function tick() {
-    TheWorldState.update(1/60);
+    TheWorldState.update(1 / 60);
     setTimeout(tick, 17);
 }
-
-startServer(3000, '../../client/build', () => console.log('Server started'));
