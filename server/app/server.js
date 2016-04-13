@@ -54,11 +54,9 @@ function startServer(port, path, callback) {
 
        socket.on('disconnect', function()  {
             console.log('client disconnected : ', socket.handshake.address);
-            console.log('TODO remove from WorldState');
             let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
             if (disconnectedActor){
                 disconnectedActor.active = false;
-                //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
             }
 
         });
