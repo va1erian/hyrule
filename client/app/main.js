@@ -34,13 +34,15 @@ TheAssetManager.push('map-overworld', 'data/overworld.map')
 
 let socket = io.connect();
 let FADE_TIME = 130;
+let username;
+let skin;
 
 function sendMessage () {
    var message = $('.inputMessage').val();
    if (message) {
       $('.inputMessage').val('');
       addChatMessage({
-         username: "izi ouzo",
+         username: (username) ? username : "User",
          message: message
       });
 
@@ -53,14 +55,12 @@ function addChatMessage (data, options) {
 
     var $usernameDiv = $('<span class="username"/>')
         .text(data.username)
-        .css('color', 'blue');
+        .css('color', (data.skin) ? data.skin : skin);
     var $messageBodyDiv = $('<span class="messageBody">')
         .text(data.message);
 
-    //var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
         .data('username', data.username)
-        //.addClass(typingClass)
         .append($usernameDiv, $messageBodyDiv);
 
     addMessageElement($messageDiv, options);
@@ -118,8 +118,8 @@ function checkInputs(username, skin) {
 }
 
 function getValidInputs() {
-   let username = $('#username').val();
-   let skin = $('#color').val();
+   username = $('#username').val();
+   skin = $('#color').val();
    if(!checkInputs(username, skin)) {
       alert('Veuillez saisir un pseudo et un skin valide ');
       return;

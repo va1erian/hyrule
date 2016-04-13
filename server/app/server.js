@@ -43,10 +43,9 @@ function initWorld(assets) {
     TheWorldState.layers.push([tilemap, tileset]);
 }
 
+const DEFAULT_ROOM = TheWorldState.rooms.get("overworld");
+
 function startServer(port, path, callback) {
-
-    let nbParticipants = 0;
-
     app.use(express.static(Path.join(__dirname, path)));
     app.use(morgan('combined'));
 
@@ -57,49 +56,47 @@ function startServer(port, path, callback) {
         socket.on('connect-user', function (data) {
             if(userAdded) return;
             if (!(data.username === undefined) && !(data.skin === undefined)) {
-                console.log("uA.connect-user", userAdded);
-                socket.username = data.username;
-                socket.skin = data.skin;
-                TheWorldState.spawnPlayer(socket);
+                //console.log("uA.connect-user", userAdded);
+
+                let player = TheWorldState.spawnPlayer(socket);
+                player.username = data.username;
+                player.skin = data.skin;
                 userAdded = true;
                 socket.emit('is-user-connected', true);
-                
-                nbParticipants++;
-                socket.nbParticipants = nbParticipants;
 
-                console.log("uA.user-joined", userAdded);
+                //console.log("uA.user-joined", userAdded);
                 socket.broadcast.emit('user joined', {
-                    username: "Thug", // TODO: use real username
-                    nbParticipants: nbParticipants
+                    username: DEFAULT_ROOM.playerBySocket(socket).username,
+                    nbParticipants: DEFAULT_ROOM.nbPlayers
                 });
             }
         });
 
         socket.on('chat message', function (data) {
-            console.log("uA.chat-msg", userAdded);
+            //console.log("uA.chat-msg", userAdded);
             if (userAdded) {
-                console.log('new message:' + data);
+                //console.log('new message:' + data);
                 socket.broadcast.emit('chat message', {
-                    username: "Thug",
+                    username: DEFAULT_ROOM.playerBySocket(socket).username,
+                    skin: DEFAULT_ROOM.playerBySocket(socket).skin,
                     message: data
                 });
             }
         });
 
         socket.on('disconnect', function (data) {
+            const room = TheWorldState.rooms.get("overworld");
             if (userAdded) {
                 console.log('user ' + socket.username + ' disconnected');
-                nbParticipants--; // FIXME: do not decrement if zero
                 console.log('client disconnected : ', socket.handshake.address);
                 console.log('TODO remove from WorldState');
-                let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
+                let disconnectedActor = DEFAULT_ROOM.playerBySocket(socket);
                 if (disconnectedActor) {
                     disconnectedActor.active = false;
-                    //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
                 }
                 socket.broadcast.emit('user disconnected', {
-                    username: "Anonymous", //replace with socket.username
-                    nbParticipants: nbParticipants
+                    username: disconnectedActor.username, //replace with socket.username
+                    nbParticipants: DEFAULT_ROOM.nbPlayers
                 });
             }
         });

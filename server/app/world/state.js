@@ -22,6 +22,15 @@ class Room {
       this.actors.splice(this.actors.indexOf(player), 1);
    }
 
+   get nbPlayers() {
+      let count = 0;
+      this.actors.forEach((e) => {
+         if(e.isPlayer) count++;
+      });
+
+      return count;
+   }
+
    playerBySocket(socket){
       for(const actor of this.actors) {
          if (actor instanceof PlayerActor){
