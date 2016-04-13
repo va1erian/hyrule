@@ -24,11 +24,16 @@ html, body {
 #signin {
 	padding-top: 100px;
 	text-align: center;
+   font-family: arcadeFont;
+}
+
+#signin h1, #signin h3 {
+   font-weight: normal;
 }
 
 #signin h1 {
 	margin-bottom: 100px;
-	font-size: 3rem;
+	font-size: 32px;
 }
 
 #signin [type="text"] {
@@ -41,7 +46,7 @@ html, body {
 	border-left: hidden;
 	border-bottom: 2px solid white;
 	background: none;
-	font-size: 1.5rem;
+	font-size: 16px;
 }
 
 #signin input:focus {
@@ -65,7 +70,7 @@ html, body {
     display: block;
     /*border: 1px solid gray;*/
     margin: 0 auto;
-    padding-top: 20px;
+    padding-top: 10px;
     /*background-color: white;*/
 }
 
@@ -115,12 +120,12 @@ form button {
     padding-right: 15px;
     text-align: right;
     font-family: arcadeFont;
-    font-size: x-small;
+    font-size: 16px;
 }
 
 .messageBody{
     font-family: arcadeFont;
-    font-size: x-small;
+    font-size: 16px;
 }
 
 .messages {

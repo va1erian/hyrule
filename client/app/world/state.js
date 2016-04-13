@@ -14,7 +14,7 @@ class WorldState {
    }
 
    setActorList(serverRoom) {
-      //this.actors.clear();
+
       for(let i of this.actors.keys()) {
          let checkActor = this.actors.get(i);
          let findActor = false;

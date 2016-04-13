@@ -41,12 +41,13 @@ export class Actor {
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
      
-      //if(this.currentLayer[0].isColliding(new Rectangle(nextX,nextY, this.w, this.h))) {
+      if(this.currentLayer[0].isColliding(
+            new Rectangle(nextX  ,nextY , this.w, this.h, this.offX, this.offY))) {
          this.colliding(nextX,nextY);
-      //} else {
+      } else {
          this.x = nextX;
          this.y = nextY;
-      //}
+      }
    }
 
    colliding(x,y) { }
@@ -67,6 +68,11 @@ export class PlayerActor extends Actor {
       this.socket = socket;
       this.color = "";
       this.active = true;
+      
+      this.offY = 8;
+      this.offX = 2;
+      this.w = 14;
+      this.h = 8;
    }
    
    setState(state) {

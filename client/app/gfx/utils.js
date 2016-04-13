@@ -17,6 +17,12 @@ function makeCanvas(width, height) {
    return buffer;
 }
 
+export function clamp(min, val, max) {
+   if(val < min) return min;
+   else if(val > max) return max;
+   else return val;
+}
+
 export class Renderer {
    constructor(viewport) {
       this.viewport = viewport;

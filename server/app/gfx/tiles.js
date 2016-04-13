@@ -29,11 +29,14 @@ export class TileMap {
       this.tileProps = [];
    }  
    
-   isRectOnTileFlag(rect, flag) {
-      return this.tileHasFlag(this.getTileAtPos(rect.x, rect.y), flag) 
-         && this.tileHasFlag(this.getTileAtPos(rect.x + rect.w, rect.y),flag)
-         && this.tileHasFlag(this.getTileAtPos(rect.x + rect.w, rect.y + rect.h),flag)
-         && this.tileHasFlag(this.getTileAtPos(rect.x, rect.y + rect.h),flag);
+   isRectOnTileFlag(rect,flag) {
+      const trueX = rect.x + rect.offX;
+      const trueY = rect.y + rect.offY;
+
+      return this.tileHasFlag(this.getTileAtPos(trueX, trueY), flag)
+         && this.tileHasFlag(this.getTileAtPos(trueX + rect.w, trueY),flag)
+         && this.tileHasFlag(this.getTileAtPos(trueX + rect.w, trueY + rect.h),flag)
+         && this.tileHasFlag(this.getTileAtPos(trueX, trueY + rect.h),flag);
    }
    
    tileHasFlag(tile, flag) {
