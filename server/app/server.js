@@ -12,9 +12,9 @@ import {TheWorldState} from 'world/state';
 import {TheAssetManager} from 'tools/assets';
 import {TileSet, TileType, TileMap} from 'gfx/tiles';
 
-var app = express();
-var server = http.createServer(app);
-var io = socketio().listen(server);
+let app = express();
+let server = http.createServer(app);
+let io = socketio().listen(server);
 
 /* global __dirname */
 
@@ -82,6 +82,13 @@ function startServer(port, path, callback) {
       socket.on('disconnect', function (data) {
          console.log('user ' +socket.username+' disconnected');
          nbParticipants--;
+          console.log('client disconnected : ', socket.handshake.address);
+          console.log('TODO remove from WorldState');
+          let disconnectedActor = TheWorldState.rooms.get("overworld").playerBySocket(socket)
+          if (disconnectedActor){
+              disconnectedActor.active = false;
+              //TheWorldState.rooms.get("overworld").removePlayer(disconnectedActor);
+          }
          socket.broadcast.emit('user disconnected', {
             username: "Anonymous", //replace with socket.username
             nbParticipants: nbParticipants
@@ -93,5 +100,9 @@ function startServer(port, path, callback) {
    server.listen(port, callback);
 }
 
+function tick() {
+    TheWorldState.update(1/60);
+    setTimeout(tick, 17);
+}
 
 startServer(3000, '../../client/build', () => console.log('Server started'));
