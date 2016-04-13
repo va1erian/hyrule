@@ -16,7 +16,7 @@ class WorldState {
    setActorList(room) {
       this.actors.clear();
       for(let i of room.actors) {
-         let actor = new Player(i.uuid,TheWorldState);
+         let actor = new Player(i.uuid, i.color, TheWorldState);
          actor.setState(i);
          this.actors.set(actor.uuid, actor);
       }

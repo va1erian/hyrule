@@ -73,8 +73,10 @@ class WorldState {
       this.rooms.set('overworld', new Room('overworld'));
    }
 
-   spawnPlayer(socket) {
+   spawnPlayer(socket, color, username) {
       let player = new PlayerActor(socket, this);
+      player.color = color;
+      player.username = username;
       player.x = 1904;
       player.y = 1328;
       this.rooms.get('overworld').addPlayer(player);

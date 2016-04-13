@@ -4,6 +4,7 @@ import {TheAssetManager} from 'tools/assets';
 import {TileSet} from 'gfx/tiles';
 import {Sprite} from 'gfx/sprite';
 import {TheInput, Keys} from 'tools/input';
+import {SkinColor} from 'tools/SkinColor';
 
 var Direction = {
    NORTH : 0,
@@ -66,56 +67,11 @@ export class Actor {
    } 
 }
 
-export class Moblin extends Actor {
-   constructor(world) {
-      const sheet = TheAssetManager.get('sprite-moblin');
-      const tileset = new TileSet(sheet, 16, 16);      
-      super(new Sprite([tileset]),world);
-      this.offY = 8;
-      this.offX = 2;
-      this.w = 14;
-      this.h = 8;
-      this.direction = Direction.NORTH;
-      
-      var dirChange = () => {
-         this.direction = Math.floor(Math.random() * 4);
-         setTimeout(dirChange, Math.floor(Math.random() * 1000) + 1000);
-      };
-      
-      dirChange();
-   }
-   
-   update(dt) {
-      this.sprites[0].currentAnimation = this.direction;
-      switch(this.direction) {
-         case Direction.NORTH:
-         this.yMom = -30;
-         this.xMom = 0;
-         break;
-         case Direction.SOUTH:
-         this.yMom = 30;
-         this.xMom = 0;
-         break;
-         case Direction.WEST:
-         this.xMom = -30;
-         this.yMom = 0;
-         break;
-         case Direction.EAST:
-         this.xMom = 30;
-         this.yMom = 0;
-         break;
-      }
-      super.update(dt);
-   }
-   
-   colliding(x,y) {
-         this.direction = Math.floor(Math.random() * 4);
-   }
-}
-
 export class Player extends Actor {
-   constructor(uuid, world) {
-      const sheet   = TheAssetManager.get('sprite-link');
+   constructor(uuid, color, world) {
+      console.log(color);
+      let colorizer = new SkinColor(TheAssetManager.get('sprite-link'));
+      const sheet   = colorizer.changeColor(color);
       const tileset = new TileSet(sheet, 16, 16);
 
       super(new Sprite([tileset]),world);

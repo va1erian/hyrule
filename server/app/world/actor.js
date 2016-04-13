@@ -55,7 +55,8 @@ export class Actor {
       return {
          uuid : this.uuid, x: this.x, y: this.y, 
          dir : this.dir, changed : this.changed,
-         moving: (this.xMom !== 0 || this.yMom !== 0)
+         moving: (this.xMom !== 0 || this.yMom !== 0),
+         color: this.color
       };
    }
 }
@@ -64,7 +65,7 @@ export class PlayerActor extends Actor {
    constructor(socket,world) {
       super(world);
       this.socket = socket;
-      this.color = "";
+      this.color = "FUCK YOU";
       this.active = true;
    }
    

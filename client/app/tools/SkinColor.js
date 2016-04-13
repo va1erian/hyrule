@@ -6,20 +6,19 @@ export class SkinColor {
     constructor(img) {
         this.originalLinkColor = SkinColor.hexToRGB("#b8f818");
         this.canvas = document.createElement("canvas");
+        this.canvas.width = img.naturalWidth;
+        this.canvas.height = img.naturalHeight;
         this.ctx = this.canvas.getContext("2d");
-        
+
         this.pixels = this.getPixels(img);
     }
 
     // Load the Link image given the img tag
     getPixels(img) {
-        this.canvas.width = img.width;
-        this.canvas.height = img.height;
-
-        this.ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, img.width, img.height);
+        this.ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, img.naturalWidth, img.naturalHeight);
         return {
-            original : this.ctx.getImageData(0, 0, img.width, img.height),
-            after : this.ctx.getImageData(0, 0, img.width, img.height)
+            original : this.ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight),
+            after    : this.ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight)
         };
     }
 
@@ -34,6 +33,7 @@ export class SkinColor {
     }
 
     changeColor(colorPickerValue) {
+        console.log(colorPickerValue);
         let newColor = SkinColor.hexToRGB(colorPickerValue);
 
         for(var I = 0, L = this.pixels.original.data.length; I < L; I += 4) {
@@ -52,6 +52,8 @@ export class SkinColor {
         }
 
         this.ctx.putImageData(this.pixels.after, 0, 0);
-        return this.canvas.toDataURL("image/png");
+        let finalImage = document.createElement('img');
+        finalImage.src = this.canvas.toDataURL();
+        return finalImage;
     }
 }

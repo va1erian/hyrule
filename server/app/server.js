@@ -56,15 +56,11 @@ function startServer(port, path, callback) {
         socket.on('connect-user', function (data) {
             if(userAdded) return;
             if (!(data.username === undefined) && !(data.skin === undefined)) {
-                //console.log("uA.connect-user", userAdded);
+                let player = TheWorldState.spawnPlayer(socket, data.skin, data.username);
 
-                let player = TheWorldState.spawnPlayer(socket);
-                player.username = data.username;
-                player.skin = data.skin;
                 userAdded = true;
                 socket.emit('is-user-connected', true);
 
-                //console.log("uA.user-joined", userAdded);
                 socket.broadcast.emit('user joined', {
                     username: DEFAULT_ROOM.playerBySocket(socket).username,
                     nbParticipants: DEFAULT_ROOM.nbPlayers
@@ -78,7 +74,7 @@ function startServer(port, path, callback) {
                 //console.log('new message:' + data);
                 socket.broadcast.emit('chat message', {
                     username: DEFAULT_ROOM.playerBySocket(socket).username,
-                    skin: DEFAULT_ROOM.playerBySocket(socket).skin,
+                    skin: DEFAULT_ROOM.playerBySocket(socket).color,
                     message: data
                 });
             }
