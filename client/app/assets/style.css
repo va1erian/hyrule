@@ -63,9 +63,10 @@ html, body {
 
 #output {
     display: block;
-    border: 1px sold gray;
-    margin: 20px auto;
-    background-color: white;
+    /*border: 1px solid gray;*/
+    margin: 0 auto;
+    padding-top: 20px;
+    /*background-color: white;*/
 }
 
 .chat-container {
