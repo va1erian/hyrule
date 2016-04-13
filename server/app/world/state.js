@@ -77,8 +77,8 @@ class WorldState {
       let player = new PlayerActor(socket, this);
       player.color = color;
       player.username = username;
-      player.x = 1904;
-      player.y = 1328;
+      player.x = 112;
+      player.y = 144;
       this.rooms.get('overworld').addPlayer(player);
       player.socket.emit('player-welcome', player.uuid);
 

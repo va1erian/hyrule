@@ -1,4 +1,3 @@
-
 'use strict';
 
 import "app-module-path/register";
@@ -23,26 +22,29 @@ TheWorldState.io = io;
 
 
 TheAssetManager
-   .push('map-overworld', 'data/overworld.map')
-   .then(main);
+    .push('map-overworld', 'data/overworld.map')
+    .push('map-mmoz', 'data/map.json')
+    .then(main);
 
 function main(assets) {
-   console.log('MMOZ server!')
-   initWorld(assets);
-   startServer(3000, '../../client/build', () => console.log('Server started'));
-   tick();
+    console.log('MMOZ server!')
+    initWorld(assets);
+    startServer(3000, '../../client/build', () => console.log('Server started'));
+    tick();
 }
 
 function initWorld(assets) {
-   let tileset = new TileSet(114); //114 tiles in tileset
-   let worldTileProps = tileset.makeTileProps();
-   worldTileProps[6]  |= TileType.TILE_WALKABLE;
-   worldTileProps[44] |= TileType.TILE_WALKABLE;
-   worldTileProps[45] |= TileType.TILE_WALKABLE;
-   let tilemap = new TileMap(256, 84, assets.get('map-overworld'), tileset);
-   tilemap.tileProps = worldTileProps;
-  
-   TheWorldState.layers.push([tilemap, tileset]); 
+    const mapMmoz = assets.get('map-mmoz');
+
+    let tileset = new TileSet(103, mapMmoz.tilesets[0].tileheight, mapMmoz.tilesets[0].tilewidth); //114 tiles in tileset
+    let worldTileProps = tileset.makeTileProps();
+    worldTileProps[7] |= TileType.TILE_WALKABLE; // old: 6
+    worldTileProps[45] |= TileType.TILE_WALKABLE; // old: 44
+    worldTileProps[46] |= TileType.TILE_WALKABLE; // old: 45
+    let tilemap = new TileMap(mapMmoz.width, mapMmoz.height, mapMmoz.layers[0].data, tileset);
+    tilemap.tileProps = worldTileProps;
+
+    TheWorldState.layers.push([tilemap, tileset]);
 }
 
 const DEFAULT_ROOM = TheWorldState.rooms.get("overworld");

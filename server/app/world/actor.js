@@ -65,7 +65,7 @@ export class PlayerActor extends Actor {
    constructor(socket,world) {
       super(world);
       this.socket = socket;
-      this.color = "FUCK YOU";
+      this.color = "";
       this.active = true;
    }
    

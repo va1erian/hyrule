@@ -37,7 +37,7 @@ export class TileMap {
    constructor(w, h, array, tileset) {
       this.w = w;
       this.h = h;
-      this.array = new Int16Array(array);
+      this.array = array;
       this.tileset = tileset;
       this.tileProps = [];
 
@@ -73,7 +73,7 @@ export class TileMap {
 
       for(var i = clipX; i < clipX + Math.floor(clip.w / tset.tileW) + 1; ++i) {
          for(var j = clipY; j < clipY + Math.floor(clip.h / tset.tileH) + 1; ++j) {
-            const tile = this.array[this.w * j + i];
+            const tile = this.array[this.w * j + i] - 1; // -1 because of an offset on the tileset
             tset.paintTile(ctx, tile, (i * tset.tileW - clip.x + x) | 0, (j * tset.tileH - clip.y + y) | 0);
          }
       }

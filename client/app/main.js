@@ -27,6 +27,7 @@ $(document).ready(function() {
 var loop = new GameLoop();
 
 TheAssetManager.push('map-overworld', 'data/overworld.map')
+    .push('map-mmoz', 'data/map.json')
    .push('tileset-overworld', 'img/overworld.gif')
    .push('sprite-link', 'img/link.png')
    .push('sprite-moblin', 'img/moblin.png')
@@ -173,28 +174,30 @@ socket.on('user disconnected', function (data) {
 });
 
 function init(assets) {
-   let tileset = new TileSet(assets.get('tileset-overworld'), 16,16);
-   let worldTileProps = tileset.makeTileProps();
-  
-   let tilemap = new TileMap(256,84, assets.get('map-overworld'), tileset);
-   tilemap.tileProps = worldTileProps;
+    const mapMmoz = assets.get('map-mmoz');
+    
+    let tileset = new TileSet(assets.get('tileset-overworld'), mapMmoz.tilesets[0].tileheight, mapMmoz.tilesets[0].tilewidth);
+    let worldTileProps = tileset.makeTileProps();
 
-   TheWorldState.layers.push([tilemap, tileset]);
+    let tilemap = new TileMap(mapMmoz.width, mapMmoz.height, mapMmoz.layers[0].data, tileset);
+    tilemap.tileProps = worldTileProps;
 
-   socket.on('player-join', (el)  => TheWorldState.setActorList(el));
-   socket.on('player-update', (el) => TheWorldState.refreshActor(el));
-   socket.on('player-welcome', (el) =>  {
-      TheWorldState.playerUUID = el;
-      const controller =  new KeyboardController(socket);
-      const viewport = new ViewPort(TheWorldState, new Rectangle (0, 0, 256, 224));
-            
-      const cam = new PlayerCamera(viewport, TheWorldState.localPlayer);
-      loop.add(TheWorldState);
-      loop.add(controller);
-      loop.add(cam);
-      loop.add(new Renderer(viewport));
-   });
-   loop.start();
+    TheWorldState.layers.push([tilemap, tileset]);
+
+    socket.on('player-join', (el) => TheWorldState.setActorList(el));
+    socket.on('player-update', (el) => TheWorldState.refreshActor(el));
+    socket.on('player-welcome', (el) => {
+        TheWorldState.playerUUID = el;
+        const controller = new KeyboardController(socket);
+        const viewport = new ViewPort(TheWorldState, new Rectangle(0, 0, 256, 224));
+
+        const cam = new PlayerCamera(viewport, TheWorldState.localPlayer);
+        loop.add(TheWorldState);
+        loop.add(controller);
+        loop.add(cam);
+        loop.add(new Renderer(viewport));
+    });
+    loop.start();
 }
 
 
