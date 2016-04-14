@@ -47,14 +47,12 @@ class Room {
       for(const actor of this.actors) {
          if (actor instanceof PlayerActor && !actor.active){
             this.removePlayer(actor);
-            console.log('Client removed from array');
             TheWorldState.io.to(this.id).emit('player-join', this);
-            return;
-
-         } else{
+         } else {
             actor.update(dt);
             if (actor.changed) {
                this.broadcastActorUpdate(actor);
+               actor.changed = false;
             }
          }
 

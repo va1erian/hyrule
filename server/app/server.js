@@ -73,9 +73,7 @@ function startServer(port, path, callback) {
         });
 
         socket.on('chat message', function (data) {
-            //console.log("uA.chat-msg", userAdded);
             if (userAdded) {
-                //console.log('new message:' + data);
                 socket.broadcast.emit('chat message', {
                     username: DEFAULT_ROOM.playerBySocket(socket).username,
                     skin: DEFAULT_ROOM.playerBySocket(socket).color,
@@ -89,7 +87,6 @@ function startServer(port, path, callback) {
             if (userAdded) {
                 console.log('user ' + socket.username + ' disconnected');
                 console.log('client disconnected : ', socket.handshake.address);
-                console.log('TODO remove from WorldState');
                 let disconnectedActor = DEFAULT_ROOM.playerBySocket(socket);
                 if (disconnectedActor) {
                     disconnectedActor.active = false;

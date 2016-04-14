@@ -26,7 +26,7 @@ export class Actor {
       this.xMom = 0;
       this.yMom = 0;
       this.world = world;
-      this.changed = true;
+      this.changed = false;
    }
    
    get currentLayer() {
@@ -40,6 +40,10 @@ export class Actor {
    update(dt) {
       const nextX = this.x + (this.xMom === 0 ? 0 : this.xMom * dt);
       const nextY = this.y + (this.yMom === 0 ? 0 : this.yMom * dt);
+     
+
+      this.changed = (nextX != this.x || nextY != this.y) ;
+      
      
       if(this.currentLayer[0].isColliding(
             new Rectangle(nextX  ,nextY , this.w, this.h, this.offX, this.offY))) {
@@ -56,7 +60,7 @@ export class Actor {
       return {
          uuid : this.uuid, x: this.x, y: this.y, 
          dir : this.dir, changed : this.changed,
-         moving: (this.xMom !== 0 || this.yMom !== 0),
+         moving: this.changed,
          color: this.color
       };
    }
@@ -83,7 +87,6 @@ export class PlayerActor extends Actor {
       }
       this.dir = state.dir;
 
-
       switch(state.dir) {
          case Direction.NORTH:
             this.yMom = -50;
@@ -102,6 +105,8 @@ export class PlayerActor extends Actor {
             this.yMom = 0;
             break;
       }
+      
+      this.changed = true;
    }
 }
 

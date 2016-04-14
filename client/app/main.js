@@ -15,13 +15,6 @@ import { SkinColor } from 'tools/SkinColor';
 $(document).ready(function() {
     let skinImg = document.getElementById('skinImg');
     let colorPicker = document.getElementById('color');
-    
-    // Live skin color edition
-    let skinColor = new SkinColor(skinImg);
-    // Listener on input color tag
-    colorPicker.addEventListener("input", function() {
-        skinImg.src = skinColor.changeColor(colorPicker.value);
-    }, false);
 });
 
 var loop = new GameLoop();
