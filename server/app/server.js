@@ -36,11 +36,11 @@ function main(assets) {
 function initWorld(assets) {
     const mapMmoz = assets.get('map-mmoz');
 
-    let tileset = new TileSet(103, mapMmoz.tilesets[0].tileheight, mapMmoz.tilesets[0].tilewidth); //114 tiles in tileset
+    let tileset = new TileSet(mapMmoz.tilesets[0].tilecount, mapMmoz.tilesets[0].tileheight, mapMmoz.tilesets[0].tilewidth);
     let worldTileProps = tileset.makeTileProps();
-    worldTileProps[7] |= TileType.TILE_WALKABLE; // old: 6
-    worldTileProps[45] |= TileType.TILE_WALKABLE; // old: 44
-    worldTileProps[46] |= TileType.TILE_WALKABLE; // old: 45
+    worldTileProps[7] |= TileType.TILE_WALKABLE;
+    worldTileProps[45] |= TileType.TILE_WALKABLE;
+    worldTileProps[46] |= TileType.TILE_WALKABLE;
     let tilemap = new TileMap(mapMmoz.width, mapMmoz.height, mapMmoz.layers[0].data, tileset);
     tilemap.tileProps = worldTileProps;
 

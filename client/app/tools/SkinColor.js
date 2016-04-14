@@ -33,7 +33,6 @@ export class SkinColor {
     }
 
     changeColor(colorPickerValue) {
-        console.log(colorPickerValue);
         let newColor = SkinColor.hexToRGB(colorPickerValue);
 
         for(var I = 0, L = this.pixels.original.data.length; I < L; I += 4) {

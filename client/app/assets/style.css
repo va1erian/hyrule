@@ -120,12 +120,12 @@ form button {
     padding-right: 15px;
     text-align: right;
     font-family: arcadeFont;
-    font-size: 16px;
+    font-size: x-small;
 }
 
 .messageBody{
     font-family: arcadeFont;
-    font-size: 16px;
+    font-size: x-small;
 }
 
 .messages {
