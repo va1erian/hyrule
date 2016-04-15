@@ -24,7 +24,7 @@ html, body {
 #signin {
 	padding-top: 100px;
 	text-align: center;
-   font-family: arcadeFont;
+    font-family: arcadeFont;
 }
 
 #signin h1, #signin h3 {
@@ -62,16 +62,57 @@ html, body {
 .colorChoice [type="color"] {
 	width: 100%;
 	margin-bottom: 10px;
+    height: 40px;
 	border: none;
 	background: none;
+    cursor: pointer;
+}
+
+/* removes default styling from input color element */
+::-webkit-color-swatch {
+    border: none;
+}
+
+::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+::-moz-color-swatch,
+::-moz-focus-inner {
+    border: none;
+}
+
+::-moz-focus-inner {
+    padding: 0;
+}
+
+#submitForm {
+    margin-top: 10px;
+    padding: 10px;
+    border: 2px solid white;
+    background-color: transparent;
+    outline: none;
+
+    font-family: arcadeFont;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+
+    -webkit-transition: all 0.6s;
+    -moz-transition: all 0.6s;
+    -ms-transition: all 0.6s;
+    -o-transition: all 0.6s;
+    transition: all 0.6s;
+}
+#submitForm:hover {
+    padding: 10px 15px;
+    letter-spacing: 3px;
 }
 
 #output {
     display: block;
-    /*border: 1px solid gray;*/
     margin: 0 auto;
     padding-top: 10px;
-    /*background-color: white;*/
 }
 
 .chat-container {
